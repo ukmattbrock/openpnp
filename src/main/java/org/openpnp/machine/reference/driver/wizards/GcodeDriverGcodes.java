@@ -368,7 +368,7 @@ public class GcodeDriverGcodes extends AbstractConfigurationWizard {
     private JComboBox<HeadMountableItem> comboBoxHm;
     private JTextArea textAreaCommand;
 
-    static class HeadMountableItem {
+    public static class HeadMountableItem {
         private HeadMountable hm;
 
         public HeadMountableItem(HeadMountable hm) {

@@ -26,8 +26,9 @@ import org.openpnp.machine.reference.ReferenceHeadMountable;
 import org.openpnp.machine.reference.ReferenceMachine;
 import org.openpnp.machine.reference.ReferenceNozzle;
 import org.openpnp.machine.reference.ReferenceNozzleTip;
-import org.openpnp.machine.reference.driver.wizards.GcodeDriverGcodes;
+import org.openpnp.machine.reference.driver.wizards.GcodeDriverAxes;
 import org.openpnp.machine.reference.driver.wizards.GcodeDriverConsole;
+import org.openpnp.machine.reference.driver.wizards.GcodeDriverGcodes;
 import org.openpnp.machine.reference.driver.wizards.GcodeDriverSettings;
 import org.openpnp.model.Configuration;
 import org.openpnp.model.LengthUnit;
@@ -301,6 +302,10 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
             }
         }
         return null;
+    }
+    
+    public List<Axis> getAxes() {
+        return axes;
     }
 
     public Command getCommand(HeadMountable hm, CommandType type, boolean checkDefaults) {
@@ -894,6 +899,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
         return new PropertySheet[] {
                 new PropertySheetWizardAdapter(new GcodeDriverGcodes(this), "Gcode"),
                 new PropertySheetWizardAdapter(new GcodeDriverSettings(this), "General Settings"),
+                new PropertySheetWizardAdapter(new GcodeDriverAxes(this), "Axes"),
                 new PropertySheetWizardAdapter(new GcodeDriverConsole(this), "Console"),
                 new PropertySheetWizardAdapter(super.getConfigurationWizard(), "Serial")
         };
@@ -1092,6 +1098,11 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         public void setPreMoveCommand(String preMoveCommand) {
             this.preMoveCommand = preMoveCommand;
+        }
+        
+        @Override
+        public String toString() {
+            return name;
         }
     }
 

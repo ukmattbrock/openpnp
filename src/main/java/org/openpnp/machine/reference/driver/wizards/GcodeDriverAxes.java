@@ -1,6 +1,8 @@
 package org.openpnp.machine.reference.driver.wizards;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -147,23 +149,31 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
     }
     
-    private void fillHeadMountables() {
+    private List<HeadMountable> getHeadMountables() {
+        List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
         for (Head head : Configuration.get().getMachine().getHeads()) {
             for (Nozzle hm : head.getNozzles()) {
-                headMountableCb.addItem(new HeadMountableItem(hm));
+                headMountables.add(hm);
             }
             for (PasteDispenser hm : head.getPasteDispensers()) {
-                headMountableCb.addItem(new HeadMountableItem(hm));
+                headMountables.add(hm);
             }
             for (Camera hm : head.getCameras()) {
-                headMountableCb.addItem(new HeadMountableItem(hm));
+                headMountables.add(hm);
             }
             for (Actuator hm : head.getActuators()) {
-                headMountableCb.addItem(new HeadMountableItem(hm));
+                headMountables.add(hm);
             }
         }
-        for (Actuator actuator : Configuration.get().getMachine().getActuators()) {
-            headMountableCb.addItem(new HeadMountableItem(actuator));
+        for (Actuator hm : Configuration.get().getMachine().getActuators()) {
+            headMountables.add(hm);
+        }
+        return headMountables;
+    }
+    
+    private void fillHeadMountables() {
+        for (HeadMountable hm : getHeadMountables()) {
+            headMountableCb.addItem(new HeadMountableItem(hm));
         }
     }
     
@@ -210,11 +220,31 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
             this.selectedHeadMountable = selectedHeadMountable;
             firePropertyChange("selectedHeadMountable", oldValue, selectedHeadMountable);
             firePropertyChange("headMountableAttached", null, isHeadMountableAttached());
-            System.out.println(selectedHeadMountable);
+        }
+        
+        private void cleanupHeadMountables() {
+            Axis axis = ((AxisItem) axisCb.getSelectedItem()).getAxis();
+            if (axis.getHeadMountableIds().contains("*")) {
+                axis.getHeadMountableIds().remove("*");
+                for (HeadMountable hm : getHeadMountables()) {
+                    axis.getHeadMountableIds().add(hm.getId());
+                }
+            }
         }
         
         public void setHeadMountableAttached(boolean attached) {
-            
+            cleanupHeadMountables();
+            Axis axis = ((AxisItem) axisCb.getSelectedItem()).getAxis();
+            if (getSelectedHeadMountable() == null) {
+                return;
+            }
+            HeadMountable hm = getSelectedHeadMountable().getHeadMountable();
+            if (attached) {
+                axis.getHeadMountableIds().add(hm.getId());
+            }
+            else {
+                axis.getHeadMountableIds().remove(hm.getId());
+            }
         }
         
         public boolean isHeadMountableAttached() {

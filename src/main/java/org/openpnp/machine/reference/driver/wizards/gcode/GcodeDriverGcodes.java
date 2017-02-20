@@ -1,4 +1,4 @@
-package org.openpnp.machine.reference.driver.wizards;
+package org.openpnp.machine.reference.driver.wizards.gcode;
 
 import java.awt.Color;
 import java.awt.FileDialog;

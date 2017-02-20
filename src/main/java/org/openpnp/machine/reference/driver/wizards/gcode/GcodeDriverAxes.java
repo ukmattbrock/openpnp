@@ -1,4 +1,4 @@
-package org.openpnp.machine.reference.driver.wizards;
+package org.openpnp.machine.reference.driver.wizards.gcode;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import org.openpnp.machine.reference.driver.GcodeDriver.Axis;
 import org.openpnp.machine.reference.driver.GcodeDriver.AxisTransform;
 import org.openpnp.machine.reference.driver.GcodeDriver.CamTransform;
 import org.openpnp.machine.reference.driver.GcodeDriver.NegatingTransform;
-import org.openpnp.machine.reference.driver.wizards.GcodeDriverGcodes.HeadMountableItem;
+import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverGcodes.HeadMountableItem;
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
 import org.openpnp.spi.Actuator;

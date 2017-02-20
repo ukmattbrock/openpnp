@@ -17,6 +17,9 @@ import org.openpnp.gui.support.AbstractConfigurationWizard;
 import org.openpnp.gui.support.DoubleConverter;
 import org.openpnp.machine.reference.driver.GcodeDriver;
 import org.openpnp.machine.reference.driver.GcodeDriver.Axis;
+import org.openpnp.machine.reference.driver.GcodeDriver.AxisTransform;
+import org.openpnp.machine.reference.driver.GcodeDriver.CamTransform;
+import org.openpnp.machine.reference.driver.GcodeDriver.NegatingTransform;
 import org.openpnp.machine.reference.driver.wizards.GcodeDriverGcodes.HeadMountableItem;
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
@@ -111,19 +114,19 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         homeCoordTf.setColumns(10);
         
         JLabel lblHeadMountables = new JLabel("Head Mountables");
-        panel.add(lblHeadMountables, "2, 14, right, default");
+        panel.add(lblHeadMountables, "2, 16, right, default");
         
         headMountableCb = new JComboBox();
-        panel.add(headMountableCb, "4, 14");
+        panel.add(headMountableCb, "4, 16");
         
         headMountableAttachedChk = new JCheckBox("Attached");
-        panel.add(headMountableAttachedChk, "6, 14");
+        panel.add(headMountableAttachedChk, "6, 16");
         
         lblPremoveCommand = new JLabel("Pre-Move Command");
-        panel.add(lblPremoveCommand, "2, 16, right, default");
+        panel.add(lblPremoveCommand, "2, 14, right, default");
         
         preMoveTf = new JTextField();
-        panel.add(preMoveTf, "4, 16, fill, default");
+        panel.add(preMoveTf, "4, 14, fill, default");
         preMoveTf.setColumns(10);
         
         JLabel lblTransform = new JLabel("Transform");
@@ -135,6 +138,13 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         fillHeadMountables();
         fillAxes();
         fillTypes();
+        fillTransforms();
+    }
+    
+    private void fillTransforms() {
+        transformCb.addItem(new ClassItem(null));
+        transformCb.addItem(new ClassItem(CamTransform.class));
+        transformCb.addItem(new ClassItem(NegatingTransform.class));
     }
     
     private void fillTypes() {
@@ -149,7 +159,7 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
     }
     
-    private List<HeadMountable> getHeadMountables() {
+    private static List<HeadMountable> getHeadMountables() {
         List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
         for (Head head : Configuration.get().getMachine().getHeads()) {
             for (Nozzle hm : head.getNozzles()) {
@@ -177,16 +187,24 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
     }
     
+    public Axis getSelectedAxis() {
+        return ((AxisItem) axisCb.getSelectedItem()).axis;
+    }
+    
     @Override
     public void createBindings() {
+        // TODO: Selecing a new axis doesn't load the head mountable attached properly.
+        // Same with the transforms.
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         
         bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.name", nameTf, "text");
         bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.type", typeCb, "selectedItem");
         bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.homeCoordinate", homeCoordTf, "text", doubleConverter);
         bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.preMoveCommand", preMoveTf, "text");
-        bind(UpdateStrategy.READ_WRITE, proxies, "selectedHeadMountable", headMountableCb, "selectedItem");
+        bind(UpdateStrategy.READ, axisCb, "selectedItem.axis", proxies, "selectedAxis");
+        bind(UpdateStrategy.READ_WRITE, proxies, "selectedHeadMountable", headMountableCb, "selectedItem.headMountable");
         bind(UpdateStrategy.READ_WRITE, proxies, "headMountableAttached", headMountableAttachedChk, "selected");
+        bind(UpdateStrategy.READ_WRITE, proxies, "transformClass", transformCb, "selectedItem.cls");
         
         ComponentDecorators.decorateWithAutoSelect(homeCoordTf);
         ComponentDecorators.decorateWithAutoSelect(preMoveTf);
@@ -208,22 +226,45 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
     }
     
+    public static class ClassItem {
+        public final Class cls;
+        
+        public ClassItem(Class cls) {
+            this.cls = cls;
+        }
+        
+        public Class getCls() {
+            return cls;
+        }
+        
+        public String toString() {
+            return cls == null ? "None" : cls.getSimpleName();
+        }
+    }
+    
     public class Proxies extends AbstractModelObject {
-        private HeadMountableItem selectedHeadMountable;
+        private HeadMountable selectedHeadMountable;
+        
+        public void setSelectedAxis(Axis axis) {
+            firePropertyChange("selectedHeadMountable", null, getSelectedHeadMountable());
+            firePropertyChange("headMountableAttached", null, isHeadMountableAttached());
+            firePropertyChange("transformClass", null, getTransformClass());
+        }
 
-        public HeadMountableItem getSelectedHeadMountable() {
+        public HeadMountable getSelectedHeadMountable() {
             return selectedHeadMountable;
         }
 
-        public void setSelectedHeadMountable(HeadMountableItem selectedHeadMountable) {
+        public void setSelectedHeadMountable(HeadMountable selectedHeadMountable) {
             Object oldValue = this.selectedHeadMountable;
             this.selectedHeadMountable = selectedHeadMountable;
             firePropertyChange("selectedHeadMountable", oldValue, selectedHeadMountable);
             firePropertyChange("headMountableAttached", null, isHeadMountableAttached());
+            firePropertyChange("transformClass", null, getTransformClass());
         }
         
         private void cleanupHeadMountables() {
-            Axis axis = ((AxisItem) axisCb.getSelectedItem()).getAxis();
+            Axis axis = getSelectedAxis();
             if (axis.getHeadMountableIds().contains("*")) {
                 axis.getHeadMountableIds().remove("*");
                 for (HeadMountable hm : getHeadMountables()) {
@@ -234,11 +275,11 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         
         public void setHeadMountableAttached(boolean attached) {
             cleanupHeadMountables();
-            Axis axis = ((AxisItem) axisCb.getSelectedItem()).getAxis();
+            Axis axis = getSelectedAxis();
             if (getSelectedHeadMountable() == null) {
                 return;
             }
-            HeadMountable hm = getSelectedHeadMountable().getHeadMountable();
+            HeadMountable hm = getSelectedHeadMountable();
             if (attached) {
                 axis.getHeadMountableIds().add(hm.getId());
             }
@@ -248,15 +289,40 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
         
         public boolean isHeadMountableAttached() {
-            Axis axis = ((AxisItem) axisCb.getSelectedItem()).getAxis();
+            Axis axis = getSelectedAxis();
             if (getSelectedHeadMountable() == null) {
                 return false;
             }
-            HeadMountable hm = getSelectedHeadMountable().getHeadMountable();
+            HeadMountable hm = getSelectedHeadMountable();
             if (axis.getHeadMountableIds().contains("*") || axis.getHeadMountableIds().contains(hm.getId())) {
                 return true;
             }
             return false;
+        }
+        
+        public Class getTransformClass() {
+            System.out.println("getTransformClass");
+            Axis axis = getSelectedAxis();
+            if (axis.getTransform() == null) {
+                return null;
+            }
+            return axis.getTransform().getClass();
+        }
+        
+        public void setTransformClass(Class cls) throws Exception {
+            Axis axis = getSelectedAxis();
+            // Don't allow the binding to re-set the class when it's just setting
+            // the same thing as this would wipe out the config.
+            if (axis.getTransform() != null && axis.getTransform().getClass() == cls) {
+                return;
+            }
+            System.out.println("setTransformClass " + cls);
+            if (cls == null) {
+                axis.setTransform(null);
+                return;
+            }
+            AxisTransform transform = (AxisTransform) cls.newInstance();
+            axis.setTransform(transform);
         }
     }
 

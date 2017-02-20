@@ -1153,6 +1153,14 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
             // use the same function.
             return toTransformed(axis, hm, transformedCoordinate);
         }
+
+        public String getNegatedHeadMountableId() {
+            return negatedHeadMountableId;
+        }
+
+        public void setNegatedHeadMountableId(String negatedHeadMountableId) {
+            this.negatedHeadMountableId = negatedHeadMountableId;
+        }
     }
 
     public static class CamTransform implements AxisTransform {
@@ -1186,6 +1194,38 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
                 raw = -raw;
             }
             return raw;
+        }
+
+        public String getNegatedHeadMountableId() {
+            return negatedHeadMountableId;
+        }
+
+        public void setNegatedHeadMountableId(String negatedHeadMountableId) {
+            this.negatedHeadMountableId = negatedHeadMountableId;
+        }
+
+        public double getCamRadius() {
+            return camRadius;
+        }
+
+        public void setCamRadius(double camRadius) {
+            this.camRadius = camRadius;
+        }
+
+        public double getCamWheelRadius() {
+            return camWheelRadius;
+        }
+
+        public void setCamWheelRadius(double camWheelRadius) {
+            this.camWheelRadius = camWheelRadius;
+        }
+
+        public double getCamWheelGap() {
+            return camWheelGap;
+        }
+
+        public void setCamWheelGap(double camWheelGap) {
+            this.camWheelGap = camWheelGap;
         }
     }
 }

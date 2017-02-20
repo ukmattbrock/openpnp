@@ -1,5 +1,6 @@
 package org.openpnp.machine.reference.driver.wizards.gcode;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ import org.openpnp.machine.reference.driver.GcodeDriver.AxisTransform;
 import org.openpnp.machine.reference.driver.GcodeDriver.CamTransform;
 import org.openpnp.machine.reference.driver.GcodeDriver.NegatingTransform;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverGcodes.HeadMountableItem;
+import org.openpnp.machine.reference.driver.wizards.gcode.transform.GcodeCamTransform;
+import org.openpnp.machine.reference.driver.wizards.gcode.transform.GcodeNegatingTransform;
 import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
 import org.openpnp.spi.Actuator;
@@ -135,6 +138,10 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         transformCb = new JComboBox();
         panel.add(transformCb, "4, 18");
         
+        transformPanel = new JPanel();
+        contentPanel.add(transformPanel);
+        transformPanel.setLayout(new BorderLayout(0, 0));
+        
         fillHeadMountables();
         fillAxes();
         fillTypes();
@@ -159,7 +166,7 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
     }
     
-    private static List<HeadMountable> getHeadMountables() {
+    public static List<HeadMountable> getHeadMountables() {
         List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
         for (Head head : Configuration.get().getMachine().getHeads()) {
             for (Nozzle hm : head.getNozzles()) {
@@ -301,28 +308,47 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         }
         
         public Class getTransformClass() {
-            System.out.println("getTransformClass");
             Axis axis = getSelectedAxis();
+            System.out.println("getTransformClass " + axis);
             if (axis.getTransform() == null) {
+                System.out.println("null");
                 return null;
             }
+            System.out.println("getTransformClass " + axis.getTransform().getClass());
             return axis.getTransform().getClass();
         }
         
         public void setTransformClass(Class cls) throws Exception {
             Axis axis = getSelectedAxis();
+            System.out.println("setTransformClass " + axis + " " + cls);
             // Don't allow the binding to re-set the class when it's just setting
             // the same thing as this would wipe out the config.
             if (axis.getTransform() != null && axis.getTransform().getClass() == cls) {
+                System.out.println("bail");
                 return;
             }
-            System.out.println("setTransformClass " + cls);
+            
+            transformPanel.removeAll();
+            revalidate();
+            repaint();
+            
             if (cls == null) {
                 axis.setTransform(null);
+                System.out.println("bail 2");
                 return;
             }
             AxisTransform transform = (AxisTransform) cls.newInstance();
             axis.setTransform(transform);
+            
+            if (cls == CamTransform.class) {
+                transformPanel.add(new GcodeCamTransform((CamTransform) transform));
+            }
+            else if (cls == NegatingTransform.class) {
+                transformPanel.add(new GcodeNegatingTransform((NegatingTransform) transform));
+            }
+            revalidate();
+            repaint();
+            System.out.println("done");
         }
     }
 
@@ -339,4 +365,5 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
     private JTextField preMoveTf;
     private JLabel lblWarningApplyAnd;
     private JLabel lblYourChangesWill;
+    private JPanel transformPanel;
 }

@@ -45,6 +45,84 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
     public GcodeDriverAxes(GcodeDriver driver) {
         this.driver = driver;
         
+        createUi();
+        
+        fillHeadMountables();
+        fillAxes();
+        fillTypes();
+        fillTransforms();
+    }
+    
+    private void fillTransforms() {
+        transformCb.addItem(new ClassItem(null));
+        transformCb.addItem(new ClassItem(CamTransform.class));
+        transformCb.addItem(new ClassItem(NegatingTransform.class));
+    }
+    
+    private void fillTypes() {
+        for (Axis.Type type : Axis.Type.values()) {
+            typeCb.addItem(type);
+        }
+    }
+    
+    private void fillAxes() {
+        for (Axis axis : driver.getAxes()) {
+            axisCb.addItem(new AxisItem(axis));
+        }
+    }
+    
+    public static List<HeadMountable> getHeadMountables() {
+        List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
+        for (Head head : Configuration.get().getMachine().getHeads()) {
+            for (Nozzle hm : head.getNozzles()) {
+                headMountables.add(hm);
+            }
+            for (PasteDispenser hm : head.getPasteDispensers()) {
+                headMountables.add(hm);
+            }
+            for (Camera hm : head.getCameras()) {
+                headMountables.add(hm);
+            }
+            for (Actuator hm : head.getActuators()) {
+                headMountables.add(hm);
+            }
+        }
+        for (Actuator hm : Configuration.get().getMachine().getActuators()) {
+            headMountables.add(hm);
+        }
+        return headMountables;
+    }
+    
+    private void fillHeadMountables() {
+        for (HeadMountable hm : getHeadMountables()) {
+            headMountableCb.addItem(new HeadMountableItem(hm));
+        }
+    }
+    
+    public Axis getSelectedAxis() {
+        return ((AxisItem) axisCb.getSelectedItem()).axis;
+    }
+    
+    @Override
+    public void createBindings() {
+        // TODO: Selecing a new axis doesn't load the head mountable attached properly.
+        // Same with the transforms.
+        DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
+        
+        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.name", nameTf, "text");
+        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.type", typeCb, "selectedItem");
+        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.homeCoordinate", homeCoordTf, "text", doubleConverter);
+        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.preMoveCommand", preMoveTf, "text");
+        bind(UpdateStrategy.READ, axisCb, "selectedItem.axis", proxies, "selectedAxis");
+        bind(UpdateStrategy.READ_WRITE, proxies, "selectedHeadMountable", headMountableCb, "selectedItem.headMountable");
+        bind(UpdateStrategy.READ_WRITE, proxies, "headMountableAttached", headMountableAttachedChk, "selected");
+        bind(UpdateStrategy.READ_WRITE, proxies, "transformClass", transformCb, "selectedItem.cls");
+        
+        ComponentDecorators.decorateWithAutoSelect(homeCoordTf);
+        ComponentDecorators.decorateWithAutoSelect(preMoveTf);
+    }
+    
+    private void createUi() {
         JPanel panel = new JPanel();
         contentPanel.add(panel);
         panel.setLayout(new FormLayout(new ColumnSpec[] {
@@ -141,80 +219,6 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         transformPanel = new JPanel();
         contentPanel.add(transformPanel);
         transformPanel.setLayout(new BorderLayout(0, 0));
-        
-        fillHeadMountables();
-        fillAxes();
-        fillTypes();
-        fillTransforms();
-    }
-    
-    private void fillTransforms() {
-        transformCb.addItem(new ClassItem(null));
-        transformCb.addItem(new ClassItem(CamTransform.class));
-        transformCb.addItem(new ClassItem(NegatingTransform.class));
-    }
-    
-    private void fillTypes() {
-        for (Axis.Type type : Axis.Type.values()) {
-            typeCb.addItem(type);
-        }
-    }
-    
-    private void fillAxes() {
-        for (Axis axis : driver.getAxes()) {
-            axisCb.addItem(new AxisItem(axis));
-        }
-    }
-    
-    public static List<HeadMountable> getHeadMountables() {
-        List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
-        for (Head head : Configuration.get().getMachine().getHeads()) {
-            for (Nozzle hm : head.getNozzles()) {
-                headMountables.add(hm);
-            }
-            for (PasteDispenser hm : head.getPasteDispensers()) {
-                headMountables.add(hm);
-            }
-            for (Camera hm : head.getCameras()) {
-                headMountables.add(hm);
-            }
-            for (Actuator hm : head.getActuators()) {
-                headMountables.add(hm);
-            }
-        }
-        for (Actuator hm : Configuration.get().getMachine().getActuators()) {
-            headMountables.add(hm);
-        }
-        return headMountables;
-    }
-    
-    private void fillHeadMountables() {
-        for (HeadMountable hm : getHeadMountables()) {
-            headMountableCb.addItem(new HeadMountableItem(hm));
-        }
-    }
-    
-    public Axis getSelectedAxis() {
-        return ((AxisItem) axisCb.getSelectedItem()).axis;
-    }
-    
-    @Override
-    public void createBindings() {
-        // TODO: Selecing a new axis doesn't load the head mountable attached properly.
-        // Same with the transforms.
-        DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
-        
-        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.name", nameTf, "text");
-        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.type", typeCb, "selectedItem");
-        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.homeCoordinate", homeCoordTf, "text", doubleConverter);
-        bind(UpdateStrategy.READ_WRITE, axisCb, "selectedItem.axis.preMoveCommand", preMoveTf, "text");
-        bind(UpdateStrategy.READ, axisCb, "selectedItem.axis", proxies, "selectedAxis");
-        bind(UpdateStrategy.READ_WRITE, proxies, "selectedHeadMountable", headMountableCb, "selectedItem.headMountable");
-        bind(UpdateStrategy.READ_WRITE, proxies, "headMountableAttached", headMountableAttachedChk, "selected");
-        bind(UpdateStrategy.READ_WRITE, proxies, "transformClass", transformCb, "selectedItem.cls");
-        
-        ComponentDecorators.decorateWithAutoSelect(homeCoordTf);
-        ComponentDecorators.decorateWithAutoSelect(preMoveTf);
     }
     
     public static class AxisItem {

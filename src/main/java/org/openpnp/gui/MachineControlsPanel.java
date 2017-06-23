@@ -21,8 +21,10 @@ package org.openpnp.gui;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
@@ -34,15 +36,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.openpnp.ConfigurationListener;
+import org.openpnp.gui.support.CameraItem;
+import org.openpnp.gui.support.HeadMountableItem;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.MessageBoxes;
 import org.openpnp.gui.support.NozzleItem;
+import org.openpnp.gui.support.PasteDispenserItem;
 import org.openpnp.model.Configuration;
 import org.openpnp.model.Location;
 import org.openpnp.spi.Camera;
@@ -64,12 +70,14 @@ import com.jgoodies.forms.layout.RowSpec;
 public class MachineControlsPanel extends JPanel {
     private final Configuration configuration;
 
-    private static final String PREF_JOG_CONTROLS_EXPANDED = "MachineControlsPanel.jogControlsExpanded";
+    private static final String PREF_JOG_CONTROLS_EXPANDED =
+            "MachineControlsPanel.jogControlsExpanded";
     private static final boolean PREF_JOG_CONTROLS_EXPANDED_DEF = true;
-    private Preferences prefs = Preferences.userNodeForPackage(MachineControlsPanel.class);    
-    
-    private Nozzle selectedNozzle;
-    private JComboBox comboBoxNozzles;
+    private Preferences prefs = Preferences.userNodeForPackage(MachineControlsPanel.class);
+
+    private HeadMountable selectedTool;
+
+    private JComboBox comboBoxHeadMountable;
 
     private JogControlsPanel jogControlsPanel;
 
@@ -91,15 +99,19 @@ public class MachineControlsPanel extends JPanel {
         configuration.addListener(configurationListener);
     }
 
-    public void setSelectedNozzle(Nozzle nozzle) {
-        selectedNozzle = nozzle;
-        comboBoxNozzles.setSelectedItem(selectedNozzle);
-        updateDros();
+    public Nozzle getSelectedNozzle() {
+        if (selectedTool instanceof Nozzle) {
+            return (Nozzle) selectedTool;
+        }
+
+        try {
+            return configuration.getMachine().getDefaultHead().getDefaultNozzle();
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
-    public Nozzle getSelectedNozzle() {
-        return selectedNozzle;
-    }
 
     public PasteDispenser getSelectedPasteDispenser() {
         try {
@@ -119,7 +131,19 @@ public class MachineControlsPanel extends JPanel {
      * @return
      */
     public HeadMountable getSelectedTool() {
-        return getSelectedNozzle();
+        return selectedTool;
+    }
+
+    public void setSelectedTool(HeadMountable hm) {
+        selectedTool = hm;
+        for (int i = 0; i < comboBoxHeadMountable.getItemCount(); i++) {
+            HeadMountableItem item = (HeadMountableItem) comboBoxHeadMountable.getItemAt(i); 
+            if (item.getItem() == hm) {
+                comboBoxHeadMountable.setSelectedItem(item);
+                break;
+            }
+        }
+        updateDros();
     }
 
     public JogControlsPanel getJogControlsPanel() {
@@ -136,11 +160,11 @@ public class MachineControlsPanel extends JPanel {
     }
 
     public Location getCurrentLocation() {
-        if (selectedNozzle == null) {
+        if (selectedTool == null) {
             return null;
         }
 
-        Location l = selectedNozzle.getLocation();
+        Location l = selectedTool.getLocation();
         l = l.convertToUnits(configuration.getSystemUnits());
 
         return l;
@@ -199,21 +223,24 @@ public class MachineControlsPanel extends JPanel {
                         FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"),},
                 new RowSpec[] {FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
 
-        comboBoxNozzles = new JComboBox();
-        comboBoxNozzles.addActionListener(new ActionListener() {
+        comboBoxHeadMountable = new JComboBox();
+        comboBoxHeadMountable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setSelectedNozzle(((NozzleItem) comboBoxNozzles.getSelectedItem()).getNozzle());
+                HeadMountableItem selectedItem =
+                        (HeadMountableItem) comboBoxHeadMountable.getSelectedItem();
+                setSelectedTool(selectedItem.getItem());
             }
         });
 
         panel.add(collapseButton, "2, 2");
-        panel.add(comboBoxNozzles, "4, 2, fill, default");
+        panel.add(comboBoxHeadMountable, "4, 2, fill, default");
         collapsePane.add(jogControlsPanel);
         add(collapsePane);
 
-        collapsePane.setCollapsed(!prefs.getBoolean(PREF_JOG_CONTROLS_EXPANDED, PREF_JOG_CONTROLS_EXPANDED_DEF));
-        
+        collapsePane.setCollapsed(
+                !prefs.getBoolean(PREF_JOG_CONTROLS_EXPANDED, PREF_JOG_CONTROLS_EXPANDED_DEF));
+
         collapsePane.addPropertyChangeListener("collapsed", e -> {
             prefs.putBoolean(PREF_JOG_CONTROLS_EXPANDED, !collapsePane.isCollapsed());
         });
@@ -221,6 +248,11 @@ public class MachineControlsPanel extends JPanel {
 
     @SuppressWarnings("serial")
     public Action startStopMachineAction = new AbstractAction("Stop", Icons.powerOn) {
+        {
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('E',
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             setEnabled(false);
@@ -246,10 +278,16 @@ public class MachineControlsPanel extends JPanel {
 
     @SuppressWarnings("serial")
     public Action homeAction = new AbstractAction("Home", Icons.home) {
+        {
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_BACK_QUOTE,
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             UiUtils.submitUiMachineTask(() -> {
-                selectedNozzle.getHead().home();
+                selectedTool.getHead().home();
+                startStopMachineAction.putValue(Action.SMALL_ICON, Icons.powerOff);
             });
         }
     };
@@ -281,14 +319,14 @@ public class MachineControlsPanel extends JPanel {
     private void updateStartStopButton(boolean enabled) {
         startStopMachineAction.putValue(Action.NAME, enabled ? "Stop" : "Start");
         startStopMachineAction.putValue(Action.SMALL_ICON,
-                enabled ? Icons.powerOff : Icons.powerOn);
+                enabled ? Icons.powerOffNoHome : Icons.powerOn);
     }
 
     private MachineListener machineListener = new MachineListener.Adapter() {
         @Override
         public void machineHeadActivity(Machine machine, Head head) {
             EventQueue.invokeLater(() -> updateDros());
-            EventQueue.invokeLater(() -> comboBoxNozzles.repaint());
+            EventQueue.invokeLater(() -> comboBoxHeadMountable.repaint());
         }
 
         @Override
@@ -345,10 +383,19 @@ public class MachineControlsPanel extends JPanel {
 
             for (Head head : machine.getHeads()) {
                 for (Nozzle nozzle : head.getNozzles()) {
-                    comboBoxNozzles.addItem(new NozzleItem(nozzle));
+                    comboBoxHeadMountable.addItem(new NozzleItem(nozzle));
+                }
+
+                for (Camera camera : head.getCameras()) {
+                    comboBoxHeadMountable.addItem(new CameraItem(camera));
+                }
+                
+                for (PasteDispenser dispenser : head.getPasteDispensers()) {
+                    comboBoxHeadMountable.addItem(new PasteDispenserItem(dispenser));
                 }
             }
-            setSelectedNozzle(((NozzleItem) comboBoxNozzles.getItemAt(0)).getNozzle());
+
+            setSelectedTool(((HeadMountableItem) comboBoxHeadMountable.getItemAt(0)).getItem());
 
             machine.addListener(machineListener);
 
@@ -357,16 +404,33 @@ public class MachineControlsPanel extends JPanel {
             setEnabled(machine.isEnabled());
 
             for (Head head : machine.getHeads()) {
+
                 BeanUtils.addPropertyChangeListener(head, "nozzles", (e) -> {
                     if (e.getOldValue() == null && e.getNewValue() != null) {
                         Nozzle nozzle = (Nozzle) e.getNewValue();
-                        comboBoxNozzles.addItem(new NozzleItem(nozzle));
+                        comboBoxHeadMountable.addItem(new NozzleItem(nozzle));
                     }
                     else if (e.getOldValue() != null && e.getNewValue() == null) {
-                        for (int i = 0; i < comboBoxNozzles.getItemCount(); i++) {
-                            NozzleItem item = (NozzleItem) comboBoxNozzles.getItemAt(i);
+                        for (int i = 0; i < comboBoxHeadMountable.getItemCount(); i++) {
+                            NozzleItem item = (NozzleItem) comboBoxHeadMountable.getItemAt(i);
                             if (item.getNozzle() == e.getOldValue()) {
-                                comboBoxNozzles.removeItemAt(i);
+                                comboBoxHeadMountable.removeItemAt(i);
+                            }
+                        }
+                    }
+                });
+
+                BeanUtils.addPropertyChangeListener(head, "cameras", (e) -> {
+                    if (e.getOldValue() == null && e.getNewValue() != null) {
+                        Camera camera = (Camera) e.getNewValue();
+                        comboBoxHeadMountable.addItem(new CameraItem(camera));
+                    }
+                    else if (e.getOldValue() != null && e.getNewValue() == null) {
+                        for (int i = 0; i < comboBoxHeadMountable.getItemCount(); i++) {
+                            HeadMountableItem item =
+                                    (HeadMountableItem) comboBoxHeadMountable.getItemAt(i);
+                            if (item.getItem() == e.getOldValue()) {
+                                comboBoxHeadMountable.removeItemAt(i);
                             }
                         }
                     }

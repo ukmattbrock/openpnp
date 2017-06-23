@@ -28,6 +28,7 @@ import org.openpnp.machine.reference.ReferenceHeadMountable;
 import org.openpnp.machine.reference.ReferenceMachine;
 import org.openpnp.machine.reference.ReferenceNozzle;
 import org.openpnp.machine.reference.ReferenceNozzleTip;
+import org.openpnp.machine.reference.ReferencePasteDispenser;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverAxes;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverConsole;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverGcodes;
@@ -73,7 +74,10 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
         VACUUM_REQUEST_COMMAND(true, "VacuumLevelPartOn", "VacuumLevelPartOff"),
         VACUUM_REPORT_REGEX(true),
         ACTUATOR_READ_COMMAND(true, "Id", "Name", "Index"),
-        ACTUATOR_READ_REGEX(true);
+        ACTUATOR_READ_REGEX(true),
+        PRE_DISPENSE_COMMAND(false, "DispenseTime"),
+        DISPENSE_COMMAND(false, "DispenseTime"),
+        POST_DISPENSE_COMMAND(false, "DispenseTime");
 
         final boolean headMountable;
         final String[] variableNames;
@@ -212,7 +216,9 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         // Consume any startup messages
         try {
-            while (!sendCommand(null, 250).isEmpty());
+            while (!sendCommand(null, 250).isEmpty()) {
+                
+            }
         }
         catch (Exception e) {
 
@@ -244,6 +250,29 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
         for (ReferenceDriver driver : subDrivers) {
             driver.setEnabled(enabled);
         }
+    }
+
+    @Override
+    public void dispense(ReferencePasteDispenser dispenser,Location startLocation,Location endLocation,long dispenseTimeMilliseconds) throws Exception {
+        Logger.debug("dispense({}, {}, {}, {})", new Object[] {dispenser, startLocation, endLocation, dispenseTimeMilliseconds});
+
+        String command = getCommand(null, CommandType.PRE_DISPENSE_COMMAND);
+        command = substituteVariable(command, "DispenseTime", dispenseTimeMilliseconds);
+
+        sendGcode(command);
+
+        for (ReferenceDriver driver: subDrivers )
+        {
+            driver.dispense(dispenser,startLocation,endLocation,dispenseTimeMilliseconds);
+        }
+
+        command = getCommand(null, CommandType.DISPENSE_COMMAND);
+        command = substituteVariable(command, "DispenseTime", dispenseTimeMilliseconds);
+        sendGcode(command);
+
+        command = getCommand(null, CommandType.POST_DISPENSE_COMMAND);
+        command = substituteVariable(command, "DispenseTime", dispenseTimeMilliseconds);
+        sendGcode(command);
     }
 
     @Override
@@ -447,65 +476,86 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
                 rotation = rotationAxis.getTransform().toRaw(rotationAxis, hm, rotation);
             }
 
-            boolean haveToMove = false;
-
             String command = getCommand(hm, CommandType.MOVE_TO_COMMAND);
             command = substituteVariable(command, "Id", hm.getId());
             command = substituteVariable(command, "Name", hm.getName());
             command = substituteVariable(command, "FeedRate", maxFeedRate * speed);
             command = substituteVariable(command, "BacklashFeedRate", maxFeedRate * speed * backlashFeedRateFactor);
 
-            if (xAxis == null || xAxis.getCoordinate() == x) {
-                command = substituteVariable(command, "X", null);
-                command = substituteVariable(command, "BacklashOffsetX", null); // Backlash Compensation
+            /**
+             * NSF gets applied to X and is multiplied by Y
+             * 
+             */
+            
+            boolean includeX = false, includeY = false, includeZ = false, includeRotation = false;
+            
+            // Primary checks to see if an axis should move
+            if (xAxis != null && xAxis.getCoordinate() != x) {
+                includeX = true;
             }
-            else {
+            if (yAxis != null && yAxis.getCoordinate() != y) {
+                includeY = true;
+            }
+            if (zAxis != null && zAxis.getCoordinate() != z) {
+                includeZ = true;
+            }
+            if (rotationAxis != null && rotationAxis.getCoordinate() != rotation) {
+                includeRotation = true;
+            }
+
+            // If Y is moving and there is a non squareness factor we also need to move X, even if
+            // no move was intended for X.
+            if (includeY && nonSquarenessFactor != 0 && xAxis != null) {
+                includeX = true;
+            }
+            
+            if (includeX) {
                 command = substituteVariable(command, "X", x + nonSquarenessFactor * y);
                 command = substituteVariable(command, "BacklashOffsetX", x + backlashOffsetX + nonSquarenessFactor * y); // Backlash Compensation
-                haveToMove = true;
                 if (xAxis.getPreMoveCommand() != null) {
                     sendGcode(xAxis.getPreMoveCommand());
                 }
                 xAxis.setCoordinate(x);
             }
-
-            if (yAxis == null || yAxis.getCoordinate() == y) {
-                command = substituteVariable(command, "Y", null);
-                command = substituteVariable(command, "BacklashOffsetY", null); // Backlash Compensation
-            }
             else {
+                command = substituteVariable(command, "X", null);
+                command = substituteVariable(command, "BacklashOffsetX", null); // Backlash Compensation
+            }
+
+            if (includeY) {
                 command = substituteVariable(command, "Y", y);
                 command = substituteVariable(command, "BacklashOffsetY", y + backlashOffsetY); // Backlash Compensation
-                haveToMove = true;
                 if (yAxis.getPreMoveCommand() != null) {
                     sendGcode(yAxis.getPreMoveCommand());
                 }
             }
-
-            if (zAxis == null || zAxis.getCoordinate() == z) {
-                command = substituteVariable(command, "Z", null);
-            }
             else {
+                command = substituteVariable(command, "Y", null);
+                command = substituteVariable(command, "BacklashOffsetY", null); // Backlash Compensation
+            }
+
+            if (includeZ) {
                 command = substituteVariable(command, "Z", z);
-                haveToMove = true;
                 if (zAxis.getPreMoveCommand() != null) {
                     sendGcode(zAxis.getPreMoveCommand());
                 }
             }
-
-            if (rotationAxis == null || rotationAxis.getCoordinate() == rotation) {
-                command = substituteVariable(command, "Rotation", null);
-            }
             else {
+                command = substituteVariable(command, "Z", null);
+            }
+
+            if (includeRotation) {
                 command = substituteVariable(command, "Rotation", rotation);
-                haveToMove = true;
                 if (rotationAxis.getPreMoveCommand() != null) {
                     sendGcode(rotationAxis.getPreMoveCommand());
                 }
             }
+            else {
+                command = substituteVariable(command, "Rotation", null);
+            }
 
             // Only give a command when move is necessary
-            if (haveToMove) {
+            if (includeX || includeY || includeZ || includeRotation) {
 
                 List<String> responses = sendGcode(command);
 
@@ -691,7 +741,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         try {
             if (readerThread != null && readerThread.isAlive()) {
-                readerThread.join();
+                readerThread.join(3000);
             }
         }
         catch (Exception e) {
@@ -801,8 +851,8 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
         // Read any additional responses that came in after the initial one.
         responseQueue.drainTo(responses);
 
-        Logger.debug("sendCommand({}, {}) => {}",
-                new Object[] {command, timeout == Long.MAX_VALUE ? -1 : timeout, responses});
+        Logger.debug("sendCommand({} {}, {}) => {}",
+                new Object[] {portName, command, timeout == Long.MAX_VALUE ? -1 : timeout, responses});
         return responses;
     }
 
@@ -1210,8 +1260,9 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         @Override
         public double toRaw(Axis axis, HeadMountable hm, double transformedCoordinate) {
-            double raw = Math.toDegrees(
-                    Math.asin((transformedCoordinate - camWheelRadius - camWheelGap) / camRadius));
+            double raw = (transformedCoordinate - camWheelRadius - camWheelGap) / camRadius;
+            raw = Math.min(Math.max(raw, -1), 1);
+            raw = Math.toDegrees(Math.asin(raw));
             if (hm.getId().equals(negatedHeadMountableId)) {
                 raw = -raw;
             }

@@ -1,6 +1,123 @@
 This file lists major or notable changes to OpenPnP in chronological order. This is not
 a complete change list, only those that may directly interest or affect users.
 
+# 2017-06-17
+
+	Nozzle Tip Changer now has independent speed settings for each movement. The speeds are a 
+	multiplier, similar to how it's used in other parts of the system. The value
+	is multiplied by the system speed slider to determine the final speed. A 1.0 is "full speed".
+
+# 2017-05-18
+
+	Two new Scripting events have been added: Job.Starting and Job.Finished. These are called
+	as the job is starting and after it completes. They are intended to aid in using conveyer
+	systems to automatically load and unload PCBs.
+	
+	See https://github.com/openpnp/openpnp/wiki/Scripting#jobstarting for more info.
+
+# 2017-05-15
+	
+	New tray feeder added: RotaryTrayFeeder
+	This tray feeder takes 3 points (first component, first row last component, last row last component) 
+	to measure the component grid and is rotation agnostic. Feedback and experience reports are welcome.
+
+# 2017-05-07
+
+* Configuration Wizard Performance Improvement
+
+	Due to a bug in a third party library that is used extensively in the configuration wizards
+	in OpenPnP, performance on opening the wizards was often very poor for many users. This was
+	most obvious when clicking through your various feeders, where some users were experiencing
+	up to a 10 second delay in opening the wizard.
+	
+	Unfortunately, the library has been abandoned so even though there is a fix available, it
+	will likely never be released. Instead, we are now "monkey patching" the fix at runtime
+	and this solves the problem.
+	
+	Thanks to @SadMan on IRC for putting me on the path to the fix.
+	
+# 2017-05-06
+
+* New Bottom Vision Scripting Events
+
+	Two new scripting events have been added to assist with bottom vision lighting. They are
+	Vision.PartAlignment.Before and Vision.PartAlignment.After.
+	
+	See https://github.com/openpnp/openpnp/wiki/Scripting#visionpartalignmentbefore for more
+	information.
+
+# 2017-04-16
+
+* Script Directory Ignore
+
+	You can now add an empty .ignore file to any directory under the scripts directory to
+	have that directory be ignored when populating the Scripts menu. This is in support of
+	a feature by @cri-s to improve usability on production machines.
+	
+	More information at https://github.com/openpnp/openpnp/pull/521.
+	
+* Home Status
+	
+	The "Power On" button now turns yellow when you first enable the machine, and does not
+	turn green until the machine is homed. This helps you notice that you have not yet homed
+	the machine. Thanks to @ldpgh for this helpful feature!
+	
+	More information at https://github.com/openpnp/openpnp/issues/379.
+	
+* Python Script Examples Added
+
+	@ldpgh has added some helpful Python examples to the suite of built in Scripting
+	examples.
+
+	More information at https://github.com/openpnp/openpnp/pull/520.
+	
+# 2017-04-14
+
+* Navigation View Removed
+
+	The Navigation View has been removed as part of a cleanup effort. This feature was unfinished
+	and is unlikely to ever be finished in this iteration of the UI. Removing it improves startup
+	time, removes a dependency on JavaFX and solves some bugs.
+	
+	If you were using this feature and will miss it, please make it known on the mailing list
+	at http://groups.google.com/group/openpnp.
+	
+# 2017-04-13
+
+* BREAKING CHANGE: Outdated Drivers Removed
+
+	Several outdated drivers have been removed. These are: GrblDriver, MarlinDriver, SprinterDriver
+	TinygDriver. All of these drivers have been replaced with the much better supported
+	GcodeDriver. If you are currently using one of these drivers this version WILL BREAK your
+	configuration. If you need help migrating, please post a question to the mailing list at:
+	
+	http://groups.google.com/group/openpnp
+	
+	More information about this change and the reasoning for it is available at:
+	
+	https://github.com/openpnp/openpnp/issues/415
+	
+
+# 2017-04-09
+
+* Filter Rotated Rects CvStage
+
+	A new pipeline stage called FilterRects has been added by @dzach. It allows you to filter
+	rotated rects based on given width, length and aspect ratio limits. This can be very helpful
+	for making sure a recognized part is within acceptable size limits.
+
+# 2017-04-06
+
+* Tool Selection for Cameras
+
+	Thanks to @BendRocks an old feature has been brought back to life. You can now select
+	head mounted cameras from the Machine Controls tool dropdown box. This causes the DROs
+	to show the coordinates of the camera and allows you to jog from the camera's perspective
+	instead of just the nozzle's. This also makes it possible (although not yet implemented)
+	to do the same kind of thing for paste dispensers when that feature is revived.
+	
+	Work for this feature was performed in: https://github.com/openpnp/openpnp/pull/507
+	
 # 2017-04-01
 
 * Auto Panelization

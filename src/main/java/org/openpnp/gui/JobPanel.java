@@ -25,7 +25,9 @@ import java.awt.Component;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -51,6 +53,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -219,6 +222,8 @@ public class JobPanel extends JPanel {
                 else if (e.getFirstRow() == 0 && e.getLastRow() == Integer.MAX_VALUE) {
                     // A generic table update in response to TableDataChange
                     // event
+                	updatePanelizationIconState();
+                	
                 }
 
             }
@@ -348,6 +353,7 @@ public class JobPanel extends JPanel {
         add(splitPane);
 
         mnOpenRecent = new JMenu("Open Recent Job...");
+        mnOpenRecent.setMnemonic(KeyEvent.VK_R);
         loadRecentJobs();
 
         Configuration.get().addListener(new ConfigurationListener.Adapter() {
@@ -678,8 +684,19 @@ public class JobPanel extends JPanel {
                 (job.getFile() == null ? UNTITLED_JOB_FILENAME : job.getFile().getName()));
         frame.setTitle(title);
     }
+    
+    private boolean checkJobStopped() {
+        if (fsm.getState() != State.Stopped) {
+            MessageBoxes.errorBox(this, "Error", "Job must be stopped first.");
+            return false;
+        }
+        return true;
+    }
 
     public void importBoard(Class<? extends BoardImporter> boardImporterClass) {
+        if (!checkJobStopped()) {
+            return;
+        }
         if (getSelectedBoardLocation() == null) {
             MessageBoxes.errorBox(getTopLevelAncestor(), "Import Failed",
                     "Please select a board in the Jobs tab to import into.");
@@ -722,8 +739,17 @@ public class JobPanel extends JPanel {
     }
 
     public final Action openJobAction = new AbstractAction("Open Job...") {
+        {
+            putValue(MNEMONIC_KEY, KeyEvent.VK_O);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('O',
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            if (!checkJobStopped()) {
+                return;
+            }
             if (!checkForModifications()) {
                 return;
             }
@@ -752,8 +778,17 @@ public class JobPanel extends JPanel {
     };
 
     public final Action newJobAction = new AbstractAction("New Job") {
+        {
+            putValue(MNEMONIC_KEY, KeyEvent.VK_N);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('N',
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            if (!checkJobStopped()) {
+                return;
+            }
             if (!checkForModifications()) {
                 return;
             }
@@ -762,6 +797,12 @@ public class JobPanel extends JPanel {
     };
 
     public final Action saveJobAction = new AbstractAction("Save Job") {
+        {
+            putValue(MNEMONIC_KEY, KeyEvent.VK_S);
+            putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('S',
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             saveJob();
@@ -769,6 +810,10 @@ public class JobPanel extends JPanel {
     };
 
     public final Action saveJobAsAction = new AbstractAction("Save Job As...") {
+        {
+            putValue(MNEMONIC_KEY, KeyEvent.VK_A);
+        }
+
         @Override
         public void actionPerformed(ActionEvent arg0) {
             saveJobAs();
@@ -802,7 +847,9 @@ public class JobPanel extends JPanel {
             // before continuing so that we don't accidentally exit early. This breaks
             // the potential race condition where this task may execute before the
             // calling task (setting the FSM state) finishes.
-            while (fsm.getState() != State.Running && fsm.getState() != State.Stepping);
+            while (fsm.getState() != State.Running && fsm.getState() != State.Stepping) {
+                
+            }
 
             do {
                 if (!jobProcessor.next()) {
@@ -873,6 +920,13 @@ public class JobPanel extends JPanel {
     }
 
     private void updatePanelizationIconState() {
+    	// If more than board is in the job list, then autopanelize isn't allowed
+        if (getJob().isUsingPanel() == false && boardLocationsTable.getRowCount() > 1){
+        	panelizeAction.setEnabled(false);
+        	panelizeFiducialCheck.setEnabled(false);
+            panelizeXOutAction.setEnabled(false);	
+        }
+        
         if (getJob().getBoardLocations() == null) {
             panelizeFiducialCheck.setEnabled(false);
             panelizeXOutAction.setEnabled(false);
@@ -883,6 +937,8 @@ public class JobPanel extends JPanel {
         if (getJob().isUsingPanel() == false) {
             panelizeFiducialCheck.setEnabled(false);
             panelizeXOutAction.setEnabled(false);
+            addNewBoardAction.setEnabled(true);
+            addBoardAction.setEnabled(true);            
         }
         else {
             addNewBoardAction.setEnabled(false);
@@ -967,6 +1023,7 @@ public class JobPanel extends JPanel {
             putValue(NAME, "Add Board...");
             putValue(SMALL_ICON, Icons.add);
             putValue(SHORT_DESCRIPTION, "Add a new or existing board to the job.");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_A);
         }
 
         @Override
@@ -977,6 +1034,7 @@ public class JobPanel extends JPanel {
         {
             putValue(NAME, "New Board...");
             putValue(SHORT_DESCRIPTION, "Create a new board and add it to the job.");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_N);
         }
 
         @Override
@@ -1018,6 +1076,7 @@ public class JobPanel extends JPanel {
         {
             putValue(NAME, "Existing Board...");
             putValue(SHORT_DESCRIPTION, "Add an existing board to the job.");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_E);
         }
 
         @Override
@@ -1057,6 +1116,7 @@ public class JobPanel extends JPanel {
             putValue(SMALL_ICON, Icons.delete);
             putValue(NAME, "Remove Board");
             putValue(SHORT_DESCRIPTION, "Remove the selected board from the job.");
+            putValue(MNEMONIC_KEY, KeyEvent.VK_R);
         }
 
         @Override
@@ -1237,6 +1297,7 @@ public class JobPanel extends JPanel {
                 if (job.getBoardLocations().size() > 1) {
                     MessageBoxes.errorBox(frame, "Panelize Error",
                             "Panelization can only occur on a single board.");
+                    return;
                 }
             }
 
@@ -1295,6 +1356,9 @@ public class JobPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            if (!checkJobStopped()) {
+                return;
+            }
             if (!checkForModifications()) {
                 return;
             }
@@ -1343,6 +1407,9 @@ public class JobPanel extends JPanel {
 
     private final TextStatusListener textStatusListener = text -> {
         MainFrame.get().setStatus(text);
+        // Repainting here refreshes the tables, which contain status that needs to be updated.
+        // Would be better to have property notifiers but this is going to have to do for now.
+        repaint();
     };
 
 }

@@ -8,9 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.openpnp.model.Configuration;
 import org.openpnp.spi.Camera;
+import org.openpnp.spi.Nozzle;
+import org.openpnp.spi.Feeder;
 import org.openpnp.vision.pipeline.CvStage.Result;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -48,8 +54,13 @@ public class CvPipeline {
     private Map<CvStage, Result> results = new HashMap<CvStage, Result>();
 
     private Mat workingImage;
-
+    private Object workingModel;
+    
     private Camera camera;
+    private Nozzle nozzle;
+    private Feeder feeder;
+    
+    private long totalProcessingTimeNs;
     
     public CvPipeline() {
         
@@ -159,7 +170,16 @@ public class CvPipeline {
      * @return
      */
     public Mat getWorkingImage() {
+        if (workingImage == null || (workingImage.cols() == 0 && workingImage.rows() == 0)) {
+            workingImage = new Mat(480, 640, CvType.CV_8UC3, new Scalar(0, 0, 0));
+            Core.line(workingImage, new Point(0, 0), new Point(640, 480), new Scalar(0, 0, 255));
+            Core.line(workingImage, new Point(640, 0), new Point(0, 480), new Scalar(0, 0, 255));
+        }
         return workingImage;
+    }
+
+    public Object getWorkingModel() {
+      return workingModel;
     }
 
     public void setCamera(Camera camera) {
@@ -170,7 +190,33 @@ public class CvPipeline {
         return camera;
     }
 
+    public void setNozzle(Nozzle nozzle) {
+        this.nozzle = nozzle;
+    }
+
+    public Nozzle getNozzle() {
+        return nozzle;
+    }
+  
+    public void setFeeder(Feeder feeder) {
+        this.feeder = feeder;
+    }
+
+    public Feeder getFeeder() {
+        return feeder;
+    }
+
+    public long getTotalProcessingTimeNs() {
+      return totalProcessingTimeNs;
+    }
+
+    public void setTotalProcessingTimeNs(long totalProcessingTimeNs) {
+      this.totalProcessingTimeNs = totalProcessingTimeNs;
+    }
+
     public void process() {
+
+        totalProcessingTimeNs = 0;
         release();
         for (CvStage stage : stages) {
             // Process and time the stage and get the result.
@@ -186,6 +232,7 @@ public class CvPipeline {
                 result = new Result(null, e);
             }
             processingTimeNs = System.nanoTime() - processingTimeNs;
+            totalProcessingTimeNs += processingTimeNs;
 
             Mat image = null;
             Object model = null;
@@ -193,7 +240,9 @@ public class CvPipeline {
                 image = result.image;
                 model = result.model;
             }
-
+            if(stage.isEnabled() && model != null) {
+              workingModel=model;
+            }
             // If the result image is null and there is a working image, replace the result image
             // replace the result image with a clone of the working image.
             if (image == null) {
@@ -231,6 +280,7 @@ public class CvPipeline {
                 result.image.release();
             }
         }
+        workingModel=null;
         results.clear();
     }
 

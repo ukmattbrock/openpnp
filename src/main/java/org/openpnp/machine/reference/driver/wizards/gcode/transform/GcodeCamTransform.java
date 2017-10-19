@@ -74,9 +74,9 @@ public class GcodeCamTransform extends JPanel {
         add(camWheelGapTf, "4, 8");
         camWheelGapTf.setColumns(10);
 
-        for (HeadMountable hm : GcodeDriverAxes.getHeadMountables()) {
-            negatedHmCb.addItem(new HeadMountableItem(hm));
-        }
+//        for (HeadMountable hm : GcodeDriverAxes.getHeadMountables()) {
+//            negatedHmCb.addItem(new HeadMountableItem(hm));
+//        }
         
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         BeanUtils.bind(UpdateStrategy.READ_WRITE, transform, "negatedHeadMountableId", negatedHmCb, "selectedItem.headMountable.id");

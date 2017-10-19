@@ -132,9 +132,19 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
                 JBindings.bind(source, sourceProperty, target, targetProperty));
     }
 
+    public AutoBinding bind(Object source, String sourceProperty,
+            Object target, String targetProperty) {
+        return BeanUtils.bind(UpdateStrategy.READ_WRITE, source, sourceProperty, target, targetProperty);
+    }
+
     public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
             Object target, String targetProperty) {
         return BeanUtils.bind(updateStrategy, source, sourceProperty, target, targetProperty);
+    }
+
+    public AutoBinding bind(Object source, String sourceProperty,
+            Object target, String targetProperty, Converter converter) {
+        return BeanUtils.bind(UpdateStrategy.READ_WRITE, source, sourceProperty, target, targetProperty, converter);
     }
 
     public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,

@@ -165,6 +165,12 @@
 			<artifactId>openpnp-capture-java</artifactId>
 			<version>0.0.11</version>
 		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.18</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

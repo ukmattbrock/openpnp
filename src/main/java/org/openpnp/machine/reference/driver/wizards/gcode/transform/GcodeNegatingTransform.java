@@ -45,9 +45,9 @@ public class GcodeNegatingTransform extends JPanel {
         negatedHmCb = new JComboBox();
         add(negatedHmCb, "4, 2");
         
-        for (HeadMountable hm : GcodeDriverAxes.getHeadMountables()) {
-            negatedHmCb.addItem(new HeadMountableItem(hm));
-        }
+//        for (HeadMountable hm : GcodeDriverAxes.getHeadMountables()) {
+//            negatedHmCb.addItem(new HeadMountableItem(hm));
+//        }
         
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         BeanUtils.bind(UpdateStrategy.READ_WRITE, transform, "negatedHeadMountableId", negatedHmCb, "selectedItem.headMountable.id");

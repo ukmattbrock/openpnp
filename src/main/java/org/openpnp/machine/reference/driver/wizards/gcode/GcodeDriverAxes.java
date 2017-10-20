@@ -10,7 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
 import org.openpnp.gui.support.DoubleConverter;
@@ -37,18 +36,25 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
     
     @Override
     public void createBindings() {
+        /**
+         * This is all working well, but I found that the binding to like axis.name should have
+         * worked. The problem is that we didn't implement property changes for setAxis()
+         * and also Axis does not do property changes. If both did, I think it would actually
+         * work correctly and we would not need the interim accessors in the VM.
+         */
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         
         createAxis.addActionListener(e -> vm.createAxis());
         
         deleteAxis.addActionListener(e -> vm.deleteSelectedAxis());
-        
-        vm.addPropertyChangeListener("axes", e -> 
-            axis.setModel(new DefaultComboBoxModel<>(vm.getAxes().toArray(new AxisWrapper[]{}))));
+
+        vm.addPropertyChangeListener("axes", e -> axis.setModel(new DefaultComboBoxModel<>(vm.getAxes().toArray(new AxisWrapper[]{}))));
+        // Ensures that the axis' name in the dropdown updates as the user changes the name.
+        vm.addPropertyChangeListener("name", e -> axis.repaint());
         
         bind(vm, "axis", axis, "selectedItem");
-        bind(vm, "axis.name", name, "text");
-        bind(vm, "axis.homeCoordinate", homeCoordinate, "text", doubleConverter);
+        bind(vm, "name", name, "text");
+        bind(vm, "homeCoordinate", homeCoordinate, "text", doubleConverter);
 
         ComponentDecorators.decorateWithAutoSelect(homeCoordinate);
         ComponentDecorators.decorateWithAutoSelect(preMoveCommand);

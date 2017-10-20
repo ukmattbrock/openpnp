@@ -5,7 +5,16 @@ import java.util.List;
 
 import org.openpnp.machine.reference.driver.GcodeDriver;
 import org.openpnp.machine.reference.driver.GcodeDriver.Axis;
+import org.openpnp.machine.reference.driver.GcodeDriver.CamTransform;
+import org.openpnp.machine.reference.driver.GcodeDriver.NegatingTransform;
 import org.openpnp.model.AbstractModelObject;
+import org.openpnp.model.Configuration;
+import org.openpnp.spi.Actuator;
+import org.openpnp.spi.Camera;
+import org.openpnp.spi.Head;
+import org.openpnp.spi.HeadMountable;
+import org.openpnp.spi.Nozzle;
+import org.openpnp.spi.PasteDispenser;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,12 +26,46 @@ public class GcodeDriverAxesVm extends AbstractModelObject {
     
     private List<AxisWrapper> axes;
     private AxisWrapper axis;
-    private String name;
-    private Axis.Type type;
     
     public GcodeDriverAxesVm(GcodeDriver driver) {
         this.driver = driver;
         this.axes = new ArrayList<>();
+    }
+    
+    public void setAxis(AxisWrapper axis) {
+        this.axis = axis;
+        setName(getName());
+        setHomeCoordinate(getHomeCoordinate());
+    }
+    
+    public String getName() {
+        if (axis == null) {
+            return null;
+        }
+        return axis.getName();
+    }
+    
+    public void setName(String name) {
+        if (axis == null) {
+            return;
+        }
+        axis.setName(name);
+        firePropertyChange("name", null, getName());
+    }
+    
+    public double getHomeCoordinate() {
+        if (axis == null) {
+            return 0;
+        }
+        return axis.getHomeCoordinate();
+    }
+    
+    public void setHomeCoordinate(double homeCoordinate) {
+        if (axis == null) {
+            return;
+        }
+        axis.setHomeCoordinate(homeCoordinate);
+        firePropertyChange("homeCoordinate", null, getHomeCoordinate());
     }
     
     public void createAxis() {
@@ -38,46 +81,35 @@ public class GcodeDriverAxesVm extends AbstractModelObject {
         firePropertyChange("axes", null, axes);
     }
     
-//    public static List<HeadMountable> getHeadMountables() {
-//        List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
-//        for (Head head : Configuration.get().getMachine().getHeads()) {
-//            for (Nozzle hm : head.getNozzles()) {
-//                headMountables.add(hm);
-//            }
-//            for (PasteDispenser hm : head.getPasteDispensers()) {
-//                headMountables.add(hm);
-//            }
-//            for (Camera hm : head.getCameras()) {
-//                headMountables.add(hm);
-//            }
-//            for (Actuator hm : head.getActuators()) {
-//                headMountables.add(hm);
-//            }
-//        }
-//        for (Actuator hm : Configuration.get().getMachine().getActuators()) {
-//            headMountables.add(hm);
-//        }
-//        return headMountables;
-//    }
-//    
-//    public List<ClassItem> getTransforms() {
-//        List<ClassItem> transforms = new ArrayList<ClassItem>();
-//        transforms.add(new ClassItem(null));
-//        transforms.add(new ClassItem(CamTransform.class));
-//        transforms.add(new ClassItem(NegatingTransform.class));
-//    }
-//
-//    private void fillTypes() {
-//        for (Axis.Type type : Axis.Type.values()) {
-//            typeCb.addItem(type);
-//        }
-//    }
-//    
-//    private void fillAxes() {
-//        for (Axis axis : driver.getAxes()) {
-//            axisCb.addItem(new AxisItem(axis));
-//        }
-//    }
+    public static List<HeadMountable> getHeadMountables() {
+        List<HeadMountable> headMountables = new ArrayList<HeadMountable>();
+        for (Head head : Configuration.get().getMachine().getHeads()) {
+            for (Nozzle hm : head.getNozzles()) {
+                headMountables.add(hm);
+            }
+            for (PasteDispenser hm : head.getPasteDispensers()) {
+                headMountables.add(hm);
+            }
+            for (Camera hm : head.getCameras()) {
+                headMountables.add(hm);
+            }
+            for (Actuator hm : head.getActuators()) {
+                headMountables.add(hm);
+            }
+        }
+        for (Actuator hm : Configuration.get().getMachine().getActuators()) {
+            headMountables.add(hm);
+        }
+        return headMountables;
+    }
+    
+    public List<ClassItem> getTransforms() {
+        List<ClassItem> transforms = new ArrayList<ClassItem>();
+        transforms.add(new ClassItem(null));
+        transforms.add(new ClassItem(CamTransform.class));
+        transforms.add(new ClassItem(NegatingTransform.class));
+        return transforms;
+    }
     
     public static class AxisWrapper extends Axis {
         public String toString() {

@@ -34,38 +34,7 @@ public class GcodeDriverAxesVm extends AbstractModelObject {
     
     public void setAxis(AxisWrapper axis) {
         this.axis = axis;
-        setName(getName());
-        setHomeCoordinate(getHomeCoordinate());
-    }
-    
-    public String getName() {
-        if (axis == null) {
-            return null;
-        }
-        return axis.getName();
-    }
-    
-    public void setName(String name) {
-        if (axis == null) {
-            return;
-        }
-        axis.setName(name);
-        firePropertyChange("name", null, getName());
-    }
-    
-    public double getHomeCoordinate() {
-        if (axis == null) {
-            return 0;
-        }
-        return axis.getHomeCoordinate();
-    }
-    
-    public void setHomeCoordinate(double homeCoordinate) {
-        if (axis == null) {
-            return;
-        }
-        axis.setHomeCoordinate(homeCoordinate);
-        firePropertyChange("homeCoordinate", null, getHomeCoordinate());
+        firePropertyChange("axis", null, getAxis());
     }
     
     public void createAxis() {
@@ -111,6 +80,8 @@ public class GcodeDriverAxesVm extends AbstractModelObject {
         return transforms;
     }
     
+    // TODO STOPSHIP this kinda mixes view code with viewmodel code. Try to find a better
+    // way to handle it. Same with the ClassItem below.
     public static class AxisWrapper extends Axis {
         public String toString() {
             return String.format("%s (%s)", getName(), getType());

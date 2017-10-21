@@ -33,6 +33,7 @@ import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverAxes;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverConsole;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverGcodes;
 import org.openpnp.machine.reference.driver.wizards.gcode.GcodeDriverSettings;
+import org.openpnp.model.AbstractModelObject;
 import org.openpnp.model.Configuration;
 import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
@@ -1065,7 +1066,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
         this.connectWaitTimeMilliseconds = connectWaitTimeMilliseconds;
     }
 
-    public static class Axis {
+    public static class Axis extends AbstractModelObject {
         public enum Type {
             X,
             Y,
@@ -1113,6 +1114,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         public void setName(String name) {
             this.name = name;
+            firePropertyChange("name", null, getName());
         }
 
         public Type getType() {
@@ -1121,6 +1123,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         public void setType(Type type) {
             this.type = type;
+            firePropertyChange("type", null, getType());
         }
 
         public double getCoordinate() {
@@ -1137,6 +1140,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         public void setHomeCoordinate(double homeCoordinate) {
             this.homeCoordinate = homeCoordinate;
+            firePropertyChange("homeCoordinate", null, getHomeCoordinate());
         }
 
         public double getTransformedCoordinate(HeadMountable hm) {
@@ -1168,6 +1172,7 @@ public class GcodeDriver extends AbstractSerialPortDriver implements Runnable {
 
         public void setPreMoveCommand(String preMoveCommand) {
             this.preMoveCommand = preMoveCommand;
+            firePropertyChange("preMoveCommand", null, getPreMoveCommand());
         }
         
         @Override

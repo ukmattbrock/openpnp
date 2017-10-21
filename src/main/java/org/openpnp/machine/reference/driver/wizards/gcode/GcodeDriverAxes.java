@@ -36,12 +36,6 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
     
     @Override
     public void createBindings() {
-        /**
-         * This is all working well, but I found that the binding to like axis.name should have
-         * worked. The problem is that we didn't implement property changes for setAxis()
-         * and also Axis does not do property changes. If both did, I think it would actually
-         * work correctly and we would not need the interim accessors in the VM.
-         */
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         
         createAxis.addActionListener(e -> vm.createAxis());
@@ -49,13 +43,14 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         deleteAxis.addActionListener(e -> vm.deleteSelectedAxis());
 
         vm.addPropertyChangeListener("axes", e -> axis.setModel(new DefaultComboBoxModel<>(vm.getAxes().toArray(new AxisWrapper[]{}))));
-        // Ensures that the axis' name in the dropdown updates as the user changes the name.
-        vm.addPropertyChangeListener("name", e -> axis.repaint());
         
         bind(vm, "axis", axis, "selectedItem");
-        bind(vm, "name", name, "text");
-        bind(vm, "homeCoordinate", homeCoordinate, "text", doubleConverter);
+        bind(vm, "axis.name", name, "text");
+        bind(vm, "axis.homeCoordinate", homeCoordinate, "text", doubleConverter);
+        bind(vm, "axis.type", type, "selectedItem");
+        bind(vm, "axis.preMoveCommand", preMoveCommand, "text");
 
+        ComponentDecorators.decorateWithAutoSelect(name);
         ComponentDecorators.decorateWithAutoSelect(homeCoordinate);
         ComponentDecorators.decorateWithAutoSelect(preMoveCommand);
     }
@@ -110,7 +105,7 @@ public class GcodeDriverAxes extends AbstractConfigurationWizard {
         JLabel lblType = new JLabel("Type");
         panel.add(lblType, "2, 6, right, default");
         
-        type = new JComboBox<>();
+        type = new JComboBox<>(Axis.Type.values());
         panel.add(type, "4, 6");
         
         JLabel lblHomeCoordinate = new JLabel("Home Coordinate");

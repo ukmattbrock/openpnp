@@ -55,16 +55,8 @@ public class TestDriver implements ReferenceDriver {
         // this driver works in natively.
         location = location.convertToUnits(LengthUnit.Millimeters);
 
-        // Get the current location of the Head that we'll move
-        Location hl = this.location;
-
-        hl = hl.derive(Double.isNaN(location.getX()) ? null : location.getX(),
-                Double.isNaN(location.getY()) ? null : location.getY(),
-                Double.isNaN(location.getZ()) ? null : location.getZ(),
-                Double.isNaN(location.getRotation()) ? null : location.getRotation());
-
-        if (!this.location.equals(hl)) {
-            this.location = hl;
+        if (!this.location.equals(location)) {
+            this.location = location;
 
             Logger.debug("moveTo({}, {}, {})", hm, this.location, speed);
 
@@ -74,7 +66,7 @@ public class TestDriver implements ReferenceDriver {
 
     @Override
     public Location getLocation(ReferenceHeadMountable hm) {
-        return location;
+        return location.add(hm.getHeadOffsets());
     }
 
     @Override

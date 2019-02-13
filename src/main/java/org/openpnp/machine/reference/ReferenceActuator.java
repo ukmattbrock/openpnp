@@ -110,9 +110,7 @@ public class ReferenceActuator extends AbstractActuator implements ReferenceHead
     @Override
     public void moveToSafeZ(double speed) throws Exception {
         Logger.debug("{}.moveToSafeZ({})", getName(), speed);
-        Length safeZ = this.safeZ.convertToUnits(getLocation().getUnits());
-        Location l = new Location(getLocation().getUnits(), Double.NaN, Double.NaN,
-                safeZ.getValue(), Double.NaN);
+        Location l = getLocation().derive(null, null, safeZ, null);
         getDriver().moveTo(this, l, getHead().getMaxPartSpeed() * speed);
         getMachine().fireMachineHeadActivity(head);
     }

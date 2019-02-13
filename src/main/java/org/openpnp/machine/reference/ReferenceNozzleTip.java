@@ -124,7 +124,7 @@ public class ReferenceNozzleTip extends AbstractNozzleTip {
                  * everything.
                  */
                 if (changerMidLocation2 == null) {
-                    changerMidLocation2 = changerMidLocation.derive(null, null, null, null);
+                    changerMidLocation2 = changerMidLocation.derive((Double) null, null, null, null);
                 }
                 /*
                  * Backwards compatibility for speed settings.

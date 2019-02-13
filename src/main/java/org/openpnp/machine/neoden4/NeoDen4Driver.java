@@ -482,10 +482,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
         double z = location.getZ();
         double c = location.getRotation();
 
-        // Handle NaNs, which means don't move this axis for this move. We just copy the existing
-        // coordinate.
-        x = Double.isNaN(x) ? this.x : x;
-        y = Double.isNaN(y) ? this.y : y;
         if (x != this.x || y != this.y) {
             moveXy(x, y);
             
@@ -495,7 +491,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
 
         switch (hm.getId()) {
             case "N1":
-                z = Double.isNaN(z) ? this.z1 : z;
                 z = Math.min(z, 0.);
                 z = Math.max(z, -12.);
                 if (z != this.z1) {
@@ -503,7 +498,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                     this.z1 = z;
                 }
                 
-                c = Double.isNaN(c) ? this.c1 : c;
                 c = Math.max(c, -180.);
                 c = Math.min(c, 180.);                
                 if (c != this.c1) {
@@ -512,7 +506,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                 }
                 break;
             case "N2":
-                z = Double.isNaN(z) ? this.z2 : z;
                 z = Math.min(z, 0.);
                 z = Math.max(z, -12.);
                 if (z != this.z2) {
@@ -520,7 +513,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                     this.z2 = z;
                 }
                 
-                c = Double.isNaN(c) ? this.c2 : c;
                 c = Math.max(c, -180.);
                 c = Math.min(c, 180.);                
                 if (c != this.c2) {
@@ -529,7 +521,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                 }
                 break;
             case "N3":
-                z = Double.isNaN(z) ? this.z3 : z;
                 z = Math.min(z, 0.);
                 z = Math.max(z, -12.);
                 if (z != this.z3) {
@@ -537,7 +528,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                     this.z3 = z;
                 }
                 
-                c = Double.isNaN(c) ? this.c3 : c;
                 c = Math.max(c, -180.);
                 c = Math.min(c, 180.);                
                 if (c != this.c3) {
@@ -546,7 +536,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                 }
                 break;
             case "N4":
-                z = Double.isNaN(z) ? this.z4 : z;
                 z = Math.min(z, 0.);
                 z = Math.max(z, -12.);
                 if (z != this.z4) {
@@ -554,7 +543,6 @@ public class NeoDen4Driver extends AbstractReferenceDriver implements Named {
                     this.z4 = z;
                 }
                 
-                c = Double.isNaN(c) ? this.c4 : c;
                 c = Math.max(c, -180.);
                 c = Math.min(c, 180.);                
                 if (c != this.c4) {

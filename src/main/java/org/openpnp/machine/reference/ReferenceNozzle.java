@@ -207,27 +207,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
 
     @Override
     public void moveTo(Location location, double speed) throws Exception {
-        // Shortcut Double.NaN. Sending Double.NaN in a Location is an old API that should no
-        // longer be used. It will be removed eventually:
-        // https://github.com/openpnp/openpnp/issues/255
-        // In the mean time, since Double.NaN would cause a problem for calibration, we shortcut
-        // it here by replacing any NaN values with the current value from the driver.
-        Location currentLocation = getLocation().convertToUnits(location.getUnits());
-        if (Double.isNaN(location.getX())) {
-            location = location.derive(currentLocation.getX(), null, null, null);
-        }
-        if (Double.isNaN(location.getY())) {
-            location = location.derive(null, currentLocation.getY(), null, null);
-        }
-        if (Double.isNaN(location.getZ())) {
-            location = location.derive(null, null, currentLocation.getZ(), null);
-        }
-        if (Double.isNaN(location.getRotation())) {
-            location = location.derive(null, null, null, currentLocation.getRotation());
-        }
-
-        if (limitRotation && !Double.isNaN(location.getRotation())
-                && Math.abs(location.getRotation()) > 180) {
+        if (limitRotation && Math.abs(location.getRotation()) > 180) {
             if (location.getRotation() < 0) {
                 location = location.derive(null, null, null, location.getRotation() + 360);
             }
@@ -250,9 +230,7 @@ public class ReferenceNozzle extends AbstractNozzle implements ReferenceHeadMoun
     @Override
     public void moveToSafeZ(double speed) throws Exception {
         Logger.debug("{}.moveToSafeZ({})", getName(), speed);
-        Length safeZ = this.safeZ.convertToUnits(getLocation().getUnits());
-        Location l = new Location(getLocation().getUnits(), Double.NaN, Double.NaN,
-                safeZ.getValue(), Double.NaN);
+        Location l = getLocation().derive(null, null, safeZ, null);
         getDriver().moveTo(this, l, getHead().getMaxPartSpeed() * speed);
         getMachine().fireMachineHeadActivity(head);
     }

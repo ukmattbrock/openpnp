@@ -57,6 +57,9 @@ public class Location {
     }
 
     public Location(LengthUnit units, double x, double y, double z, double rotation) {
+        if (Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z) || Double.isNaN(rotation)) {
+            throw new Error("Programming error: Can't create a new Location with NaN values. See https://github.com/openpnp/openpnp/issues/255 for more information.");
+        }
         this.units = units;
         this.x = x;
         this.y = y;
@@ -280,6 +283,31 @@ public class Location {
     public Location derive(Double x, Double y, Double z, Double rotation) {
         return new Location(units, x == null ? this.x : x, y == null ? this.y : y,
                 z == null ? this.z : z, rotation == null ? this.rotation : rotation);
+    }
+
+    /**
+     * Returns a new Location with the same units as this one but with values updated to the passed
+     * in values. A caveat is that if a specified value is null, the new Location will contain the
+     * value from this object instead of the new value.
+     * 
+     * This is intended as a utility method, useful for creating new Locations based on existing
+     * ones with one or more values changed.
+     * 
+     * This version of the method handles unit conversion of the parameters automatically
+     * and is thus safer than the other.
+     * 
+     * @param x
+     * @param y
+     * @param z
+     * @param rotation
+     * @return
+     */
+    public Location derive(Length x, Length y, Length z, Length rotation) {
+        return new Location(units, 
+                x == null ? this.x : x.convertToUnits(units).getValue(), 
+                y == null ? this.y : y.convertToUnits(units).getValue(),
+                z == null ? this.z : z.convertToUnits(units).getValue(), 
+                rotation == null ? this.rotation : rotation.convertToUnits(units).getValue());
     }
 
     /**

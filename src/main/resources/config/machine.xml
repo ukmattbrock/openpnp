@@ -101,7 +101,7 @@
          </camera>
       </cameras>
 	  <part-alignments>
-   	  	<part-alignment class="org.openpnp.machine.reference.vision.ReferenceBottomVision" enabled="true" pre-rotate="false"/>
+   	  	<part-alignment class="org.openpnp.machine.reference.vision.ReferenceBottomVision" enabled="true" pre-rotate="true"/>
    	  </part-alignments>
    	  <driver class="org.openpnp.machine.reference.driver.NullDriver" feed-rate-mm-per-minute="5000.0"/>
    </machine>

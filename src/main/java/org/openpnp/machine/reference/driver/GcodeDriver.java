@@ -544,6 +544,9 @@ public class GcodeDriver extends AbstractReferenceDriver implements Named, Runna
     	
         // For each given coordinate, if the axis has a transform, transform the target coordinate
         // to it's raw value.
+        
+        // TODO STOPSHIP sigh...
+        
         if (Double.isNaN(x)) {
             if (includeX) {
             	x = xAxis.getCoordinate();

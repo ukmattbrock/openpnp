@@ -19,7 +19,11 @@ public class MovableUtils {
             throws Exception {
         Head head = hm.getHead();
         head.moveToSafeZ(speed);
-        hm.moveTo(location.derive(null, null, Double.NaN, null), speed);
+        hm.moveTo(location.derive(
+                null, 
+                null, 
+                hm.getLocation().getLengthZ(), 
+                null), speed);
         hm.moveTo(location, speed);
     }
 

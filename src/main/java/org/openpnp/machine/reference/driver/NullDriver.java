@@ -121,16 +121,8 @@ public class NullDriver implements ReferenceDriver {
         }
 
         // Now that movement is complete, update the stored Location to the new
-        // Location, unless the incoming Location specified an axis with a value
-        // of NaN. NaN is interpreted to mean "Don't move this axis" so we don't
-        // update the value, either.
-
-        hl = hl.derive(Double.isNaN(location.getX()) ? null : location.getX(),
-                Double.isNaN(location.getY()) ? null : location.getY(),
-                Double.isNaN(location.getZ()) ? null : location.getZ(),
-                Double.isNaN(location.getRotation()) ? null : location.getRotation());
-
-        setHeadLocation(hm.getHead(), hl);
+        // Location.
+        setHeadLocation(hm.getHead(), location);
     }
 
     /**
@@ -154,10 +146,10 @@ public class NullDriver implements ReferenceDriver {
         double y1 = y;
         double z1 = z;
         double c1 = c;
-        double x2 = Double.isNaN(location.getX()) ? x : location.getX();
-        double y2 = Double.isNaN(location.getY()) ? y : location.getY();
-        double z2 = Double.isNaN(location.getZ()) ? z : location.getZ();
-        double c2 = Double.isNaN(location.getRotation()) ? c : location.getRotation();
+        double x2 = location.getX();
+        double y2 = location.getY();
+        double z2 = location.getZ();
+        double c2 = location.getRotation();
 
         c2 = c2 % 360.0;
 

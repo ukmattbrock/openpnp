@@ -50,7 +50,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
@@ -77,6 +76,7 @@ import org.openpnp.gui.support.ActionGroup;
 import org.openpnp.gui.support.Helpers;
 import org.openpnp.gui.support.Icons;
 import org.openpnp.gui.support.MessageBoxes;
+import org.openpnp.gui.support.PropertyEdit;
 import org.openpnp.gui.tablemodel.BoardLocationsTableModel;
 import org.openpnp.model.Board;
 import org.openpnp.model.Board.Side;
@@ -1120,6 +1120,15 @@ public class JobPanel extends JPanel {
                 Board board = configuration.getBoard(file);
                 BoardLocation boardLocation = new BoardLocation(board);
                 getJob().addBoardLocation(boardLocation);
+                boardLocation.addPropertyChangeListener(pce -> {
+                    if (pce.getSource() instanceof BoardLocation) {
+                        for (int i = 0; i < tableModel.getRowCount(); i++) {
+                            if (tableModel.getBoardLocation(i) == pce.getSource()) {
+                                tableModel.fireTableRowsUpdated(i, i);
+                            }
+                        }
+                    }
+                });
                 tableModel.fireTableDataChanged();
 
                 Helpers.selectLastTableRow(table);
@@ -1213,10 +1222,9 @@ public class JobPanel extends JPanel {
                 HeadMountable tool = MainFrame.get().getMachineControls().getSelectedTool();
                 Camera camera = tool.getHead().getDefaultCamera();
                 double z = getSelection().getLocation().getZ();
-                getSelection()
-                        .setLocation(camera.getLocation().derive(null, null, z, null));
-                tableModel.fireTableRowsUpdated(table.getSelectedRow(),
-                        table.getSelectedRow());
+                BoardLocation boardLocation = getSelection();
+                Location location = camera.getLocation().derive(null, null, z, null);
+                MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Camera Location", boardLocation, "location", location));
             });
         }
     };
@@ -1232,9 +1240,9 @@ public class JobPanel extends JPanel {
         public void actionPerformed(ActionEvent arg0) {
             HeadMountable tool = MainFrame.get().getMachineControls().getSelectedTool();
             double z = getSelection().getLocation().getZ();
-            getSelection().setLocation(tool.getLocation().derive(null, null, z, null));
-            tableModel.fireTableRowsUpdated(table.getSelectedRow(),
-                    table.getSelectedRow());
+            BoardLocation boardLocation = getSelection();
+            Location location = tool.getLocation().derive(null, null, z, null);
+            MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Tool Location", boardLocation, "location", location));
         }
     };
 

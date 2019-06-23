@@ -31,12 +31,12 @@ public class PropertyEdit extends AbstractUndoableEdit {
         catch (Exception e) {
             throw new CannotRedoException();
         }
-        try {
-            PropertyUtils.setProperty(target, property, newValue);
-        }
-        catch (Exception e) {
-            throw new CannotRedoException();
-        }
+//        try {
+//            PropertyUtils.setProperty(target, property, newValue);
+//        }
+//        catch (Exception e) {
+//            throw new CannotRedoException();
+//        }
     }
     
     public PropertyEdit(Object target, String property, Object newValue) {

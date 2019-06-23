@@ -291,7 +291,7 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
 							* Integer.parseInt(textFieldTrayCountRows.getText())
 							- Integer.parseInt(textFieldFeedCount.getText());
 					lblComponentCount.setText("Components left: " + String.valueOf(componentleft));
-					applyAction.actionPerformed(e);
+//					applyAction.actionPerformed(e);
 				}
 			});
 			btnResetFeedCount.setHorizontalAlignment(SwingConstants.LEFT);

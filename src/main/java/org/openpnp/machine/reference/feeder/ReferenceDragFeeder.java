@@ -67,10 +67,6 @@ import org.simpleframework.xml.core.Persist;
  * the right position.
  */
 public class ReferenceDragFeeder extends ReferenceFeeder {
-
-
-    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
     @Element
     protected Location feedStartLocation = new Location(LengthUnit.Millimeters);
     @Element

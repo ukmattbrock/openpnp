@@ -28,8 +28,6 @@ import org.openpnp.spi.Camera;
 import org.openpnp.spi.PropertySheetHolder;
 
 public class BufferedImageCamera extends ReferenceCamera {
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     private Camera originalCamera;
     private BufferedImage source;
 

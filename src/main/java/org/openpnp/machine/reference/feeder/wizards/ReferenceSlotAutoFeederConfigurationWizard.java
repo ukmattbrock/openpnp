@@ -20,6 +20,7 @@
 package org.openpnp.machine.reference.feeder.wizards;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -30,22 +31,16 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.jdesktop.beansbinding.AbstractBindingListener;
-import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.Binding;
-import org.jdesktop.beansbinding.BindingListener;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.components.LocationButtonsPanel;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
 import org.openpnp.gui.support.DoubleConverter;
 import org.openpnp.gui.support.IdentifiableListCellRenderer;
 import org.openpnp.gui.support.IntegerConverter;
-import org.openpnp.gui.support.JBindings.Wrapper;
 import org.openpnp.gui.support.LengthConverter;
 import org.openpnp.gui.support.MessageBoxes;
 import org.openpnp.gui.support.MutableLocationProxy;
@@ -61,7 +56,6 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
-import java.awt.FlowLayout;
 
 public class ReferenceSlotAutoFeederConfigurationWizard
         extends AbstractConfigurationWizard {
@@ -408,31 +402,32 @@ public class ReferenceSlotAutoFeederConfigurationWizard
          * In addition we add non-wrapped bindings from the bank and feeder wrappers to their
          * instance properties such as name and part. Thus they will be updated immediately.
          */
-        Wrapper<Bank> bankWrapper = new Wrapper<>();
-        Wrapper<Feeder> feederWrapper = new Wrapper<>();
+//        Wrapper<Bank> bankWrapper = new Wrapper<>();
+//        Wrapper<Feeder> feederWrapper = new Wrapper<>();
         
-        addWrappedBinding(feeder, "bank", bankWrapper, "value");
-        addWrappedBinding(feeder, "feeder", feederWrapper, "value");
-        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value", bankCb, "selectedItem");
-        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value.name", bankNameTf, "text")
-            .addBindingListener(new AbstractBindingListener() {
-                @Override
-                public void synced(Binding binding) {
-                    SwingUtilities.invokeLater(() -> bankCb.repaint());
-                }
-            });
-        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value", feederCb, "selectedItem");
-        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.name", feederNameTf, "text")
-            .addBindingListener(new AbstractBindingListener() {
-                @Override
-                public void synced(Binding binding) {
-                    SwingUtilities.invokeLater(() -> feederCb.repaint());
-                }
-            });
-        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.part", feederPartCb, "selectedItem");
+//        addWrappedBinding(feeder, "bank", bankWrapper, "value");
+//        addWrappedBinding(feeder, "feeder", feederWrapper, "value");
+//        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value", bankCb, "selectedItem");
+        // TODO STOPSHIP
+//        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value.name", bankNameTf, "text")
+//            .addBindingListener(new AbstractBindingListener() {
+//                @Override
+//                public void synced(Binding binding) {
+//                    SwingUtilities.invokeLater(() -> bankCb.repaint());
+//                }
+//            });
+//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value", feederCb, "selectedItem");
+//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.name", feederNameTf, "text")
+//            .addBindingListener(new AbstractBindingListener() {
+//                @Override
+//                public void synced(Binding binding) {
+//                    SwingUtilities.invokeLater(() -> feederCb.repaint());
+//                }
+//            });
+//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.part", feederPartCb, "selectedItem");
 
         MutableLocationProxy offsets = new MutableLocationProxy();
-        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.offsets", offsets, "location");
+//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.offsets", offsets, "location");
         bind(UpdateStrategy.READ_WRITE, offsets, "lengthX", xOffsetTf, "text", lengthConverter);
         bind(UpdateStrategy.READ_WRITE, offsets, "lengthY", yOffsetTf, "text", lengthConverter);
         bind(UpdateStrategy.READ_WRITE, offsets, "lengthZ", zOffsetTf, "text", lengthConverter);

@@ -20,37 +20,28 @@
 package org.openpnp.gui.support;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.Color;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.jdesktop.beansbinding.AbstractBindingListener;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Bindings;
+import org.jdesktop.beansbinding.Binding;
+import org.jdesktop.beansbinding.Binding.SyncFailure;
 import org.jdesktop.beansbinding.Converter;
-import org.openpnp.gui.support.JBindings.WrappedBinding;
+import org.jdesktop.beansbinding.PropertyStateEvent;
+import org.openpnp.gui.MainFrame;
 import org.openpnp.model.Configuration;
 import org.openpnp.util.BeanUtils;
 
 public abstract class AbstractConfigurationWizard extends JPanel implements Wizard {
     protected WizardContainer wizardContainer;
-    private JButton btnApply;
-    private JButton btnReset;
     protected JPanel contentPanel;
     private JScrollPane scrollPane;
-
-    private List<WrappedBinding> wrappedBindings = new ArrayList<>();
-    private ApplyResetBindingListener listener;
 
     public AbstractConfigurationWizard() {
         setLayout(new BorderLayout());
@@ -62,16 +53,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
 
         scrollPane.setBorder(null);
         add(scrollPane, BorderLayout.CENTER);
-
-        JPanel panelActions = new JPanel();
-        panelActions.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        add(panelActions, BorderLayout.SOUTH);
-
-        btnReset = new JButton(resetAction);
-        panelActions.add(btnReset);
-
-        btnApply = new JButton(applyAction);
-        panelActions.add(btnApply);
     }
 
     public abstract void createBindings();
@@ -86,8 +67,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
      * method is provided for operations that do not use wrapped bindings.
      */
     protected void notifyChange() {
-        applyAction.setEnabled(true);
-        resetAction.setEnabled(true);
     }
 
     /**
@@ -95,11 +74,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
      * you need to do, not before.
      */
     protected void loadFromModel() {
-        for (WrappedBinding wrappedBinding : wrappedBindings) {
-            wrappedBinding.reset();
-        }
-        applyAction.setEnabled(false);
-        resetAction.setEnabled(false);
     }
 
     /**
@@ -113,38 +87,30 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         catch (Exception e) {
             MessageBoxes.errorBox(getTopLevelAncestor(), "Validation Error", e.getMessage());
         }
-        for (WrappedBinding wrappedBinding : wrappedBindings) {
-            wrappedBinding.save();
+    }
+
+    public void addWrappedBinding(Object source, String sourceProperty,
+            Object target, String targetProperty, Converter converter) {
+        AutoBinding binding = bind(UpdateStrategy.READ_WRITE, source, sourceProperty, target, targetProperty, converter);
+        binding.addBindingListener(new PropertyEditBindingListener(source, sourceProperty));
+    }
+
+    public void addWrappedBinding(Object source, String sourceProperty,
+            Object target, String targetProperty) {
+        addWrappedBinding(source, sourceProperty, target, targetProperty, null);
+    }
+
+    public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
+            Object target, String targetProperty) {
+        return bind(updateStrategy, source, sourceProperty, target, targetProperty, null);
+    }
+
+    public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
+            Object target, String targetProperty, Converter converter) {
+        AutoBinding binding = BeanUtils.bind(updateStrategy, source, sourceProperty, target, targetProperty, converter);
+        if (target instanceof JComponent) {
+            binding.addBindingListener(new JComponentBackgroundUpdater((JComponent) target));
         }
-        applyAction.setEnabled(false);
-        resetAction.setEnabled(false);
-    }
-
-    public WrappedBinding addWrappedBinding(Object source, String sourceProperty,
-            Object target, String targetProperty, Converter converter) {
-        return addWrappedBinding(
-                JBindings.bind(source, sourceProperty, target, targetProperty, converter));
-    }
-
-    public WrappedBinding addWrappedBinding(Object source, String sourceProperty,
-            Object target, String targetProperty) {
-        return addWrappedBinding(
-                JBindings.bind(source, sourceProperty, target, targetProperty));
-    }
-
-    public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
-            Object target, String targetProperty) {
-        return BeanUtils.bind(updateStrategy, source, sourceProperty, target, targetProperty);
-    }
-
-    public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
-            Object target, String targetProperty, Converter converter) {
-        return BeanUtils.bind(updateStrategy, source, sourceProperty, target, targetProperty, converter);
-    }
-
-    public WrappedBinding addWrappedBinding(WrappedBinding binding) {
-        binding.addBindingListener(listener);
-        wrappedBindings.add(binding);
         return binding;
     }
 
@@ -153,7 +119,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         this.wizardContainer = wizardContainer;
         scrollPane.getVerticalScrollBar()
                 .setUnitIncrement(Configuration.get().getVerticalScrollUnitIncrement());
-        listener = new ApplyResetBindingListener(applyAction, resetAction);
         createBindings();
         loadFromModel();
     }
@@ -167,19 +132,41 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
     public String getWizardName() {
         return null;
     }
-
-    protected Action applyAction = new AbstractAction("Apply") {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            saveToModel();
-            wizardContainer.wizardCompleted(AbstractConfigurationWizard.this);
+    
+    private static class PropertyEditBindingListener extends AbstractBindingListener {
+        final Object source;
+        final String sourceProperty;
+        
+        public PropertyEditBindingListener(Object source, String sourceProperty) {
+            this.source = source;
+            this.sourceProperty = sourceProperty;
         }
-    };
-
-    protected Action resetAction = new AbstractAction("Reset") {
+        
         @Override
-        public void actionPerformed(ActionEvent arg0) {
-            loadFromModel();
+        public void targetChanged(Binding binding, PropertyStateEvent event) {
+            System.out.println("targetChanged " + sourceProperty);
+            MainFrame.get().getUndoManager().addEdit(new PropertyEdit(source, sourceProperty, event.getNewValue()));
         }
-    };
+    }
+    
+    private static class JComponentBackgroundUpdater extends AbstractBindingListener {
+        private static Color errorColor = new Color(0xff, 0xdd, 0xdd);
+        private JComponent component;
+        private Color oldBackground;
+
+        public JComponentBackgroundUpdater(JComponent component) {
+            this.component = component;
+            oldBackground = component.getBackground();
+        }
+
+        @Override
+        public void syncFailed(Binding binding, SyncFailure failure) {
+            component.setBackground(errorColor);
+        }
+
+        @Override
+        public void synced(Binding binding) {
+            component.setBackground(oldBackground);
+        }
+    }
 }

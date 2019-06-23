@@ -38,8 +38,6 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
 
 public class ImageCamera extends ReferenceCamera implements Runnable {
-    private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     @Attribute(required = false)
     private int fps = 24;
 
@@ -114,7 +112,7 @@ public class ImageCamera extends ReferenceCamera implements Runnable {
     public void setSourceUri(String sourceUri) throws Exception {
         String oldValue = this.sourceUri;
         this.sourceUri = sourceUri;
-        pcs.firePropertyChange("sourceUri", oldValue, sourceUri);
+        firePropertyChange("sourceUri", oldValue, sourceUri);
         initialize();
     }
 

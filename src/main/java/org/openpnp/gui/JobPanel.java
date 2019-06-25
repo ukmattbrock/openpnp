@@ -1120,15 +1120,6 @@ public class JobPanel extends JPanel {
                 Board board = configuration.getBoard(file);
                 BoardLocation boardLocation = new BoardLocation(board);
                 getJob().addBoardLocation(boardLocation);
-                boardLocation.addPropertyChangeListener(pce -> {
-                    if (pce.getSource() instanceof BoardLocation) {
-                        for (int i = 0; i < tableModel.getRowCount(); i++) {
-                            if (tableModel.getBoardLocation(i) == pce.getSource()) {
-                                tableModel.fireTableRowsUpdated(i, i);
-                            }
-                        }
-                    }
-                });
                 tableModel.fireTableDataChanged();
 
                 Helpers.selectLastTableRow(table);

@@ -242,7 +242,6 @@ public class ReferenceStripFeederConfigurationWizard extends AbstractConfigurati
             @Override
             public void actionPerformed(ActionEvent e) {
                 textFieldFeedCount.setText("0");
-//                applyAction.actionPerformed(e);
             }
         });
         panelTapeSettings.add(btnResetFeedCount, "12, 6");

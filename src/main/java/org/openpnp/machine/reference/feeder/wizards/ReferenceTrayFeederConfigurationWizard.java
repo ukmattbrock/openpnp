@@ -124,7 +124,6 @@ public class ReferenceTrayFeederConfigurationWizard
             @Override
             public void actionPerformed(ActionEvent e) {
                 textFieldFeedCount.setText("0");
-//                applyAction.actionPerformed(e);
             }
         });
         btnResetFeedCount.setHorizontalAlignment(SwingConstants.LEFT);

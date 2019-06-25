@@ -14,8 +14,8 @@ public class PropertyEdit extends AbstractUndoableEdit {
     final String property;
     final Object oldValue;
     final Object newValue;
-    
-    public PropertyEdit(String presentationName, Object target, String property, Object newValue) {
+
+    public PropertyEdit(String presentationName, Object target, String property, Object newValue, boolean setTargetValue) {
         if (presentationName != null) {
             this.presentationName = presentationName;
         }
@@ -31,16 +31,22 @@ public class PropertyEdit extends AbstractUndoableEdit {
         catch (Exception e) {
             throw new CannotRedoException();
         }
-//        try {
-//            PropertyUtils.setProperty(target, property, newValue);
-//        }
-//        catch (Exception e) {
-//            throw new CannotRedoException();
-//        }
+        if (setTargetValue) {
+            try {
+                PropertyUtils.setProperty(target, property, newValue);
+            }
+            catch (Exception e) {
+                throw new CannotRedoException();
+            }
+        }
     }
     
     public PropertyEdit(Object target, String property, Object newValue) {
-        this(null, target, property, newValue);
+        this(null, target, property, newValue, false);
+    }
+
+    public PropertyEdit(String presentationName, Object target, String property, Object newValue) {
+        this(presentationName, target, property, newValue, false);
     }
 
     @Override

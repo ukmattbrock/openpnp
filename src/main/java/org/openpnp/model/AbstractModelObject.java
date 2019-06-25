@@ -22,21 +22,14 @@ package org.openpnp.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.openpnp.util.BeanUtils;
-
-import com.l2fprod.common.beans.editor.DoublePropertyEditor;
-
 public abstract class AbstractModelObject {
     protected final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        System.out.println("addPropertyChangeListener " + getClass() + " " + listener);
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        System.out.println("addPropertyChangeListener " + getClass() + " " + propertyName + " " + listener);
         propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
     }
 

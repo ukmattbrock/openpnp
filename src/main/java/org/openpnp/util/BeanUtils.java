@@ -32,7 +32,7 @@ public class BeanUtils {
         }
     }
     
-    // Why doesn't this just get garbage collected if the caller doesn't hang on to it?
+    // TODO STOPSHIP Why doesn't this just get garbage collected if the caller doesn't hang on to it?
     public static AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
             Object target, String targetProperty) {
         AutoBinding binding = Bindings.createAutoBinding(updateStrategy, source,

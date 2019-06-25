@@ -1224,7 +1224,7 @@ public class JobPanel extends JPanel {
                 double z = getSelection().getLocation().getZ();
                 BoardLocation boardLocation = getSelection();
                 Location location = camera.getLocation().derive(null, null, z, null);
-                MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Camera Location", boardLocation, "location", location));
+                MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Camera Location", boardLocation, "location", location, true));
             });
         }
     };
@@ -1242,7 +1242,7 @@ public class JobPanel extends JPanel {
             double z = getSelection().getLocation().getZ();
             BoardLocation boardLocation = getSelection();
             Location location = tool.getLocation().derive(null, null, z, null);
-            MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Tool Location", boardLocation, "location", location));
+            MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Tool Location", boardLocation, "location", location, true));
         }
     };
 

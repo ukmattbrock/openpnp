@@ -144,7 +144,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         
         @Override
         public void targetChanged(Binding binding, PropertyStateEvent event) {
-            System.out.println("targetChanged " + sourceProperty);
             MainFrame.get().getUndoManager().addEdit(new PropertyEdit(source, sourceProperty, event.getNewValue()));
         }
     }

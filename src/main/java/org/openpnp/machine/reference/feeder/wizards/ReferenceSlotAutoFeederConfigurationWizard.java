@@ -31,10 +31,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.jdesktop.beansbinding.AbstractBindingListener;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.jdesktop.beansbinding.Binding;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.components.LocationButtonsPanel;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
@@ -374,64 +377,41 @@ public class ReferenceSlotAutoFeederConfigurationWizard
         bindUndoable(feeder, "postPickActuatorType", postPickActuatorType, "selectedItem");
         bindUndoable(feeder, "postPickActuatorValue", postPickActuatorValue, "text", doubleConverter);
         
-        
         bindUndoable(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
         bindUndoable(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
 
-        /**
-         * Note that we set up the bindings here differently than everywhere else. In most
-         * wizards the fields are bound with wrapped bindings and the proxy is bound with a hard
-         * binding. Here we do the opposite so that when the user captures a new location
-         * it is set on the proxy immediately. This allows the offsets to update immediately.
-         * I'm not actually sure why we do it the other way everywhere else, since this seems
-         * to work fine. Might not matter in most other cases. 
-         */
         MutableLocationProxy pickLocation = new MutableLocationProxy();
-        bindUndoable(feeder, "location", pickLocation, "location");
-        bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthX", xPickLocTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthY", yPickLocTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthZ", zPickLocTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, pickLocation, "rotation", rotPickLocTf, "text", doubleConverter);
+        bind(UpdateStrategy.READ_WRITE, feeder, "pickLocation", pickLocation, "location");
+        bindUndoable(pickLocation, "lengthX", xPickLocTf, "text", lengthConverter);
+        bindUndoable(pickLocation, "lengthY", yPickLocTf, "text", lengthConverter);
+        bindUndoable(pickLocation, "lengthZ", zPickLocTf, "text", lengthConverter);
+        bindUndoable(pickLocation, "rotation", rotPickLocTf, "text", doubleConverter);
         bind(UpdateStrategy.READ, pickLocation, "location", offsetLocButtons, "baseLocation");
         
-        /**
-         * The strategy for the bank and feeder properties are a little complex:
-         * We create an observable wrapper for bank and feeder. We add wrapped bindings
-         * for these against the source feeder, so if they are changed, then upon hitting
-         * Apply they will be changed on the source.
-         * In addition we add non-wrapped bindings from the bank and feeder wrappers to their
-         * instance properties such as name and part. Thus they will be updated immediately.
-         */
-//        Wrapper<Bank> bankWrapper = new Wrapper<>();
-//        Wrapper<Feeder> feederWrapper = new Wrapper<>();
-        
-//        addWrappedBinding(feeder, "bank", bankWrapper, "value");
-//        addWrappedBinding(feeder, "feeder", feederWrapper, "value");
-//        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value", bankCb, "selectedItem");
-        // TODO STOPSHIP
-//        bind(UpdateStrategy.READ_WRITE, bankWrapper, "value.name", bankNameTf, "text")
-//            .addBindingListener(new AbstractBindingListener() {
-//                @Override
-//                public void synced(Binding binding) {
-//                    SwingUtilities.invokeLater(() -> bankCb.repaint());
-//                }
-//            });
-//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value", feederCb, "selectedItem");
-//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.name", feederNameTf, "text")
-//            .addBindingListener(new AbstractBindingListener() {
-//                @Override
-//                public void synced(Binding binding) {
-//                    SwingUtilities.invokeLater(() -> feederCb.repaint());
-//                }
-//            });
-//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.part", feederPartCb, "selectedItem");
+        bindUndoable(feeder, "bank", bankCb, "selectedItem");
+        bindUndoable(feeder, "bank.name", bankNameTf, "text")
+            .addBindingListener(new AbstractBindingListener() {
+                @Override
+                public void synced(Binding binding) {
+                    SwingUtilities.invokeLater(() -> bankCb.repaint());
+                }
+            });
+        bindUndoable(feeder, "feeder", feederCb, "selectedItem");
+        bindUndoable(feeder, "feeder.name", feederNameTf, "text")
+            .addBindingListener(new AbstractBindingListener() {
+                @Override
+                public void synced(Binding binding) {
+                    SwingUtilities.invokeLater(() -> feederCb.repaint());
+                }
+            });
+        bindUndoable(feeder, "feeder.part", feederPartCb, "selectedItem");
 
         MutableLocationProxy offsets = new MutableLocationProxy();
-//        bind(UpdateStrategy.READ_WRITE, feederWrapper, "value.offsets", offsets, "location");
-        bind(UpdateStrategy.READ_WRITE, offsets, "lengthX", xOffsetTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, offsets, "lengthY", yOffsetTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, offsets, "lengthZ", zOffsetTf, "text", lengthConverter);
-        bind(UpdateStrategy.READ_WRITE, offsets, "rotation", rotOffsetTf, "text", doubleConverter);
+        bind(UpdateStrategy.READ_WRITE, feeder, "feeder.offsets", offsets, "location");
+        bindUndoable(offsets, "lengthX", xOffsetTf, "text", lengthConverter);
+        bindUndoable(offsets, "lengthY", yOffsetTf, "text", lengthConverter);
+        bindUndoable(offsets, "lengthZ", zOffsetTf, "text", lengthConverter);
+        bindUndoable(offsets, "rotation", rotOffsetTf, "text", doubleConverter);
 
         ComponentDecorators.decorateWithAutoSelect(actuatorName);
         ComponentDecorators.decorateWithAutoSelect(actuatorValue);

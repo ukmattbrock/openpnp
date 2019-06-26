@@ -89,15 +89,16 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         }
     }
 
-    public void bindUndoable(Object source, String sourceProperty,
+    public AutoBinding bindUndoable(Object source, String sourceProperty,
             Object target, String targetProperty, Converter converter) {
         AutoBinding binding = bind(UpdateStrategy.READ_WRITE, source, sourceProperty, target, targetProperty, converter);
         binding.addBindingListener(new PropertyEditBindingListener(source, sourceProperty));
+        return binding;
     }
 
-    public void bindUndoable(Object source, String sourceProperty,
+    public AutoBinding bindUndoable(Object source, String sourceProperty,
             Object target, String targetProperty) {
-        bindUndoable(source, sourceProperty, target, targetProperty, null);
+        return bindUndoable(source, sourceProperty, target, targetProperty, null);
     }
 
     public AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,

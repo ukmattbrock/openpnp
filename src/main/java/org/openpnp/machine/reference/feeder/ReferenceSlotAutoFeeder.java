@@ -129,6 +129,7 @@ public class ReferenceSlotAutoFeeder extends ReferenceAutoFeeder {
             throw new Exception("Bank is required.");
         }
         this.bank = bank;
+        firePropertyChange("bank", null, bank);
     }
 
     public Feeder getFeeder() {
@@ -143,6 +144,7 @@ public class ReferenceSlotAutoFeeder extends ReferenceAutoFeeder {
           }
         }
         getBank().setFeeder(this, feeder);
+        firePropertyChange("feeder", null, feeder);
     }
     
     public static synchronized IdentifiableList<Bank> getBanks() {
@@ -233,6 +235,7 @@ public class ReferenceSlotAutoFeeder extends ReferenceAutoFeeder {
         
         public void setFeeder(ReferenceSlotAutoFeeder slot, Feeder feeder) throws Exception {
             assignments.forcePut(feeder, slot);
+            firePropertyChange("feeder", null, feeder);
         }
         
         public Feeder getFeeder(ReferenceSlotAutoFeeder slot) {

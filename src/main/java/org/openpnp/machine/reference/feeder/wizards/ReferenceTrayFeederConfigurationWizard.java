@@ -139,13 +139,13 @@ public class ReferenceTrayFeederConfigurationWizard
 
         MutableLocationProxy offsets = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "offsets", offsets, "location");
-        addWrappedBinding(offsets, "lengthX", textFieldOffsetsX, "text", lengthConverter);
-        addWrappedBinding(offsets, "lengthY", textFieldOffsetsY, "text", lengthConverter);
+        bindUndoable(offsets, "lengthX", textFieldOffsetsX, "text", lengthConverter);
+        bindUndoable(offsets, "lengthY", textFieldOffsetsY, "text", lengthConverter);
 
-        addWrappedBinding(feeder, "trayCountX", textFieldTrayCountX, "text", integerConverter);
-        addWrappedBinding(feeder, "trayCountY", textFieldTrayCountY, "text", integerConverter);
+        bindUndoable(feeder, "trayCountX", textFieldTrayCountX, "text", integerConverter);
+        bindUndoable(feeder, "trayCountY", textFieldTrayCountY, "text", integerConverter);
 
-        addWrappedBinding(feeder, "feedCount", textFieldFeedCount, "text", integerConverter);
+        bindUndoable(feeder, "feedCount", textFieldFeedCount, "text", integerConverter);
 
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldOffsetsX);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldOffsetsY);

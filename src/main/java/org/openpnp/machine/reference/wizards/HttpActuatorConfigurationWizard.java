@@ -178,16 +178,16 @@ public class HttpActuatorConfigurationWizard extends AbstractConfigurationWizard
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(actuator, "name", nameTf, "text");
-        addWrappedBinding(actuator, "onUrl", onUrlTf, "text");
-        addWrappedBinding(actuator, "offUrl", offUrlTf, "text");
+        bindUndoable(actuator, "name", nameTf, "text");
+        bindUndoable(actuator, "onUrl", onUrlTf, "text");
+        bindUndoable(actuator, "offUrl", offUrlTf, "text");
         MutableLocationProxy headOffsets = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, actuator, "headOffsets", headOffsets, "location");
-        addWrappedBinding(headOffsets, "lengthX", locationX, "text", lengthConverter);
-        addWrappedBinding(headOffsets, "lengthY", locationY, "text", lengthConverter);
-        addWrappedBinding(headOffsets, "lengthZ", locationZ, "text", lengthConverter);
-        addWrappedBinding(actuator, "safeZ", textFieldSafeZ, "text", lengthConverter);
-        addWrappedBinding(actuator, "index", indexTextField, "text", intConverter);
+        bindUndoable(headOffsets, "lengthX", locationX, "text", lengthConverter);
+        bindUndoable(headOffsets, "lengthY", locationY, "text", lengthConverter);
+        bindUndoable(headOffsets, "lengthZ", locationZ, "text", lengthConverter);
+        bindUndoable(actuator, "safeZ", textFieldSafeZ, "text", lengthConverter);
+        bindUndoable(actuator, "index", indexTextField, "text", intConverter);
 
         ComponentDecorators.decorateWithAutoSelect(nameTf);
         ComponentDecorators.decorateWithAutoSelect(onUrlTf);

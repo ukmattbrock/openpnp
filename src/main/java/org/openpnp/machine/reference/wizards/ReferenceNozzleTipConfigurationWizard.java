@@ -118,10 +118,10 @@ public class ReferenceNozzleTipConfigurationWizard extends AbstractConfiguration
     public void createBindings() {
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(nozzleTip, "name", nameTf, "text");
+        bindUndoable(nozzleTip, "name", nameTf, "text");
         
-        addWrappedBinding(nozzleTip, "pickDwellMilliseconds", pickDwellTf, "text", intConverter);
-        addWrappedBinding(nozzleTip, "placeDwellMilliseconds", placeDwellTf, "text", intConverter);
+        bindUndoable(nozzleTip, "pickDwellMilliseconds", pickDwellTf, "text", intConverter);
+        bindUndoable(nozzleTip, "placeDwellMilliseconds", placeDwellTf, "text", intConverter);
         
         ComponentDecorators.decorateWithAutoSelect(nameTf);
         

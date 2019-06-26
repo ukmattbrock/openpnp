@@ -282,12 +282,12 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
     @Override
     public void createBindings() {
         IntegerConverter intConverter = new IntegerConverter();
-        addWrappedBinding(camera, "preferredWidth", textFieldPreferredWidth, "text", intConverter);
-        addWrappedBinding(camera, "preferredHeight", textFieldPreferredHeight, "text",
+        bindUndoable(camera, "preferredWidth", textFieldPreferredWidth, "text", intConverter);
+        bindUndoable(camera, "preferredHeight", textFieldPreferredHeight, "text",
                 intConverter);
-        addWrappedBinding(camera, "fps", fpsTextField, "text", intConverter);
+        bindUndoable(camera, "fps", fpsTextField, "text", intConverter);
         // Should always be last so that it doesn't trigger multiple camera reloads.
-        addWrappedBinding(camera, "deviceIndex", comboBoxDeviceIndex, "selectedItem");
+        bindUndoable(camera, "deviceIndex", comboBoxDeviceIndex, "selectedItem");
 
         ComponentDecorators.decorateWithAutoSelect(textFieldPreferredWidth);
         ComponentDecorators.decorateWithAutoSelect(textFieldPreferredHeight);

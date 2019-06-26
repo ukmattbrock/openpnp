@@ -123,10 +123,10 @@ public class SimulatedUpCameraConfigurationWizard extends AbstractConfigurationW
         MutableLocationProxy errorOffsets = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, camera, "errorOffsets", errorOffsets,
                 "location");
-        addWrappedBinding(errorOffsets, "lengthX", errorOffsetsX, "text", lengthConverter);
-        addWrappedBinding(errorOffsets, "lengthY", errorOffsetsY, "text", lengthConverter);
-        addWrappedBinding(errorOffsets, "lengthZ", errorOffsetsZ, "text", lengthConverter);
-        addWrappedBinding(errorOffsets, "rotation", errorOffsetsRotation, "text",
+        bindUndoable(errorOffsets, "lengthX", errorOffsetsX, "text", lengthConverter);
+        bindUndoable(errorOffsets, "lengthY", errorOffsetsY, "text", lengthConverter);
+        bindUndoable(errorOffsets, "lengthZ", errorOffsetsZ, "text", lengthConverter);
+        bindUndoable(errorOffsets, "rotation", errorOffsetsRotation, "text",
                 doubleConverter);
         
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(errorOffsetsX);

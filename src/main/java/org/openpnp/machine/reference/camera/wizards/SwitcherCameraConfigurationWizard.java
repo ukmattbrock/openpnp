@@ -123,11 +123,11 @@ public class SwitcherCameraConfigurationWizard extends AbstractConfigurationWiza
         LongConverter longConverter = new LongConverter();
         IntegerConverter intConverter = new IntegerConverter();
         DoubleConverter doubleConverter = new DoubleConverter("%f");
-        addWrappedBinding(camera, "camera", sourceCamera, "selectedItem");
-        addWrappedBinding(camera, "switcher", switcher, "text", intConverter);
-        addWrappedBinding(camera, "actuator", actuator, "selectedItem");
-        addWrappedBinding(camera, "actuatorDelayMillis", actuatorDelayMillis, "text", longConverter);
-        addWrappedBinding(camera, "actuatorDoubleValue", actuatorDoubleValue, "text", doubleConverter);
+        bindUndoable(camera, "camera", sourceCamera, "selectedItem");
+        bindUndoable(camera, "switcher", switcher, "text", intConverter);
+        bindUndoable(camera, "actuator", actuator, "selectedItem");
+        bindUndoable(camera, "actuatorDelayMillis", actuatorDelayMillis, "text", longConverter);
+        bindUndoable(camera, "actuatorDoubleValue", actuatorDoubleValue, "text", doubleConverter);
         
         ComponentDecorators.decorateWithAutoSelect(switcher);
         ComponentDecorators.decorateWithAutoSelect(actuatorDelayMillis);

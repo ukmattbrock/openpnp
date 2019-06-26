@@ -78,7 +78,7 @@ public class ReferenceNozzlePartDetectionWizard extends AbstractConfigurationWiz
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(nozzle, "vacuumSenseActuatorName", vacSenseActuatorNameTf, "text");
+        bindUndoable(nozzle, "vacuumSenseActuatorName", vacSenseActuatorNameTf, "text");
 
         ComponentDecorators.decorateWithAutoSelect(vacSenseActuatorNameTf);
     }

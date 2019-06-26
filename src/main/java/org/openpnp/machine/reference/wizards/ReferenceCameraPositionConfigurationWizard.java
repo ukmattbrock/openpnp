@@ -185,10 +185,10 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
             MutableLocationProxy headOffsets = new MutableLocationProxy();
             bind(UpdateStrategy.READ_WRITE, referenceCamera, "headOffsets", headOffsets,
                     "location");
-            addWrappedBinding(headOffsets, "lengthX", textFieldLocationX, "text", lengthConverter);
-            addWrappedBinding(headOffsets, "lengthY", textFieldLocationY, "text", lengthConverter);
-            addWrappedBinding(headOffsets, "lengthZ", textFieldLocationZ, "text", lengthConverter);
-            addWrappedBinding(headOffsets, "rotation", textFieldLocationRotation, "text",
+            bindUndoable(headOffsets, "lengthX", textFieldLocationX, "text", lengthConverter);
+            bindUndoable(headOffsets, "lengthY", textFieldLocationY, "text", lengthConverter);
+            bindUndoable(headOffsets, "lengthZ", textFieldLocationZ, "text", lengthConverter);
+            bindUndoable(headOffsets, "rotation", textFieldLocationRotation, "text",
                     doubleConverter);
         }
         else {
@@ -196,10 +196,10 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
             MutableLocationProxy headOffsets = new MutableLocationProxy();
             bind(UpdateStrategy.READ_WRITE, referenceCamera, "headOffsets", headOffsets,
                     "location");
-            addWrappedBinding(headOffsets, "lengthX", textFieldOffX, "text", lengthConverter);
-            addWrappedBinding(headOffsets, "lengthY", textFieldOffY, "text", lengthConverter);
-            addWrappedBinding(headOffsets, "lengthZ", textFieldOffZ, "text", lengthConverter);
-            addWrappedBinding(referenceCamera, "safeZ", textFieldSafeZ, "text", lengthConverter);
+            bindUndoable(headOffsets, "lengthX", textFieldOffX, "text", lengthConverter);
+            bindUndoable(headOffsets, "lengthY", textFieldOffY, "text", lengthConverter);
+            bindUndoable(headOffsets, "lengthZ", textFieldOffZ, "text", lengthConverter);
+            bindUndoable(referenceCamera, "safeZ", textFieldSafeZ, "text", lengthConverter);
         }
 
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldOffX);

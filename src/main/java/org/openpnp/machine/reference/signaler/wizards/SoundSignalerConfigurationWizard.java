@@ -58,7 +58,7 @@ public class SoundSignalerConfigurationWizard extends AbstractConfigurationWizar
 
     @Override
     public void createBindings() {
-        addWrappedBinding(signaler, "enableErrorSound", chckbxError, "selected");
-        addWrappedBinding(signaler, "enableFinishedSound", chckbxSuccess, "selected");
+        bindUndoable(signaler, "enableErrorSound", chckbxError, "selected");
+        bindUndoable(signaler, "enableFinishedSound", chckbxSuccess, "selected");
     }
 }

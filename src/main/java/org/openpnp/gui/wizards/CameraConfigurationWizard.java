@@ -170,15 +170,15 @@ public class CameraConfigurationWizard extends AbstractConfigurationWizard {
         LengthConverter lengthConverter = new LengthConverter(uppFormat);
         LongConverter longConverter = new LongConverter();
 
-        addWrappedBinding(camera, "name", nameTf, "text");
-        addWrappedBinding(camera, "looking", lookingCb, "selectedItem");
+        bindUndoable(camera, "name", nameTf, "text");
+        bindUndoable(camera, "looking", lookingCb, "selectedItem");
         
         MutableLocationProxy unitsPerPixel = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, camera, "unitsPerPixel", unitsPerPixel, "location");
-        addWrappedBinding(unitsPerPixel, "lengthX", textFieldUppX, "text", lengthConverter);
-        addWrappedBinding(unitsPerPixel, "lengthY", textFieldUppY, "text", lengthConverter);
+        bindUndoable(unitsPerPixel, "lengthX", textFieldUppX, "text", lengthConverter);
+        bindUndoable(unitsPerPixel, "lengthY", textFieldUppY, "text", lengthConverter);
 
-        addWrappedBinding(camera, "settleTimeMs", textFieldSettleTime, "text", longConverter);
+        bindUndoable(camera, "settleTimeMs", textFieldSettleTime, "text", longConverter);
 
         ComponentDecorators.decorateWithAutoSelect(textFieldUppX);
         ComponentDecorators.decorateWithAutoSelect(textFieldUppY);

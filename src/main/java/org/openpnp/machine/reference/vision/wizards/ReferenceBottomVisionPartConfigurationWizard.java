@@ -210,7 +210,7 @@ public class ReferenceBottomVisionPartConfigurationWizard extends AbstractConfig
 
     @Override
     public void createBindings() {
-        addWrappedBinding(partSettings, "enabled", enabledCheckbox, "selected");
-        addWrappedBinding(partSettings, "preRotateUsage", comboBoxPreRotate, "selectedItem");
+        bindUndoable(partSettings, "enabled", enabledCheckbox, "selected");
+        bindUndoable(partSettings, "preRotateUsage", comboBoxPreRotate, "selectedItem");
     }
 }

@@ -355,34 +355,34 @@ public class ReferenceStripFeederConfigurationWizard extends AbstractConfigurati
 
         MutableLocationProxy location = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "location", location, "location");
-        addWrappedBinding(location, "rotation", textFieldLocationRotation, "text", doubleConverter);
+        bindUndoable(location, "rotation", textFieldLocationRotation, "text", doubleConverter);
 
-        addWrappedBinding(feeder, "part", comboBoxPart, "selectedItem");
-        addWrappedBinding(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
-        addWrappedBinding(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
-        addWrappedBinding(feeder, "tapeType", comboBoxTapeType, "selectedItem");
+        bindUndoable(feeder, "part", comboBoxPart, "selectedItem");
+        bindUndoable(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
+        bindUndoable(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
+        bindUndoable(feeder, "tapeType", comboBoxTapeType, "selectedItem");
 
-        addWrappedBinding(feeder, "tapeWidth", textFieldTapeWidth, "text", lengthConverter);
-        addWrappedBinding(feeder, "partPitch", textFieldPartPitch, "text", lengthConverter);
-        addWrappedBinding(feeder, "feedCount", textFieldFeedCount, "text", intConverter);
+        bindUndoable(feeder, "tapeWidth", textFieldTapeWidth, "text", lengthConverter);
+        bindUndoable(feeder, "partPitch", textFieldPartPitch, "text", lengthConverter);
+        bindUndoable(feeder, "feedCount", textFieldFeedCount, "text", intConverter);
 
         MutableLocationProxy feedStartLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "referenceHoleLocation", feedStartLocation,
                 "location");
-        addWrappedBinding(feedStartLocation, "lengthX", textFieldFeedStartX, "text",
+        bindUndoable(feedStartLocation, "lengthX", textFieldFeedStartX, "text",
                 lengthConverter);
-        addWrappedBinding(feedStartLocation, "lengthY", textFieldFeedStartY, "text",
+        bindUndoable(feedStartLocation, "lengthY", textFieldFeedStartY, "text",
                 lengthConverter);
-        addWrappedBinding(feedStartLocation, "lengthZ", textFieldFeedStartZ, "text",
+        bindUndoable(feedStartLocation, "lengthZ", textFieldFeedStartZ, "text",
                 lengthConverter);
 
         MutableLocationProxy feedEndLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "lastHoleLocation", feedEndLocation, "location");
-        addWrappedBinding(feedEndLocation, "lengthX", textFieldFeedEndX, "text", lengthConverter);
-        addWrappedBinding(feedEndLocation, "lengthY", textFieldFeedEndY, "text", lengthConverter);
-        addWrappedBinding(feedEndLocation, "lengthZ", textFieldFeedEndZ, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthX", textFieldFeedEndX, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthY", textFieldFeedEndY, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthZ", textFieldFeedEndZ, "text", lengthConverter);
 
-        addWrappedBinding(feeder, "visionEnabled", chckbxUseVision, "selected");
+        bindUndoable(feeder, "visionEnabled", chckbxUseVision, "selected");
 
         ComponentDecorators.decorateWithAutoSelect(textFieldLocationRotation);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldTapeWidth);

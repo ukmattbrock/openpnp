@@ -626,10 +626,10 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
         IntegerConverter intConverter = new IntegerConverter();
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
 
-        addWrappedBinding(camera, "device", deviceCb, "selectedItem");
-        addWrappedBinding(camera, "format", formatCb, "selectedItem");
+        bindUndoable(camera, "device", deviceCb, "selectedItem");
+        bindUndoable(camera, "format", formatCb, "selectedItem");
 
-        addWrappedBinding(camera, "fps", fps, "text", doubleConverter);
+        bindUndoable(camera, "fps", fps, "text", doubleConverter);
 
         bindProperty("backLightCompensation", backLightCompensationAuto, backLightCompensationMin, 
                 backLightCompensationMax, backLightCompensationSlider,
@@ -661,7 +661,7 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
             JSlider slider, JLabel label, JTextField value, JLabel def) {
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(camera, property + ".auto", auto, "selected");
+        bindUndoable(camera, property + ".auto", auto, "selected");
 
         bind(UpdateStrategy.READ, camera, property + ".min", min, "text", intConverter);
         bind(UpdateStrategy.READ, camera, property + ".max", max, "text", intConverter);
@@ -669,8 +669,8 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
 
         bind(UpdateStrategy.READ, camera, property + ".min", slider, "minimum");
         bind(UpdateStrategy.READ, camera, property + ".max", slider, "maximum");
-        addWrappedBinding(camera, property + ".value", slider, "value");
-        addWrappedBinding(camera, property + ".value", value, "text", intConverter);
+        bindUndoable(camera, property + ".value", slider, "value");
+        bindUndoable(camera, property + ".value", value, "text", intConverter);
 
         bind(UpdateStrategy.READ, camera, property + ".autoSupported", auto, "enabled");
         bind(UpdateStrategy.READ, camera, property + ".supported", slider, "enabled");

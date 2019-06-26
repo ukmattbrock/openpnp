@@ -196,17 +196,17 @@ public abstract class AbstractReferenceFeederConfigurationWizard
         DoubleConverter doubleConverter =
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
 
-        addWrappedBinding(feeder, "part", comboBoxPart, "selectedItem");
-        addWrappedBinding(feeder, "feedRetryCount", feedRetryCount, "text", intConverter);
-        addWrappedBinding(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
+        bindUndoable(feeder, "part", comboBoxPart, "selectedItem");
+        bindUndoable(feeder, "feedRetryCount", feedRetryCount, "text", intConverter);
+        bindUndoable(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
 
         if (includePickLocation) {
             MutableLocationProxy location = new MutableLocationProxy();
             bind(UpdateStrategy.READ_WRITE, feeder, "location", location, "location");
-            addWrappedBinding(location, "lengthX", textFieldLocationX, "text", lengthConverter);
-            addWrappedBinding(location, "lengthY", textFieldLocationY, "text", lengthConverter);
-            addWrappedBinding(location, "lengthZ", textFieldLocationZ, "text", lengthConverter);
-            addWrappedBinding(location, "rotation", textFieldLocationC, "text", doubleConverter);
+            bindUndoable(location, "lengthX", textFieldLocationX, "text", lengthConverter);
+            bindUndoable(location, "lengthY", textFieldLocationY, "text", lengthConverter);
+            bindUndoable(location, "lengthZ", textFieldLocationZ, "text", lengthConverter);
+            bindUndoable(location, "rotation", textFieldLocationC, "text", doubleConverter);
             ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldLocationX);
             ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldLocationY);
             ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldLocationZ);

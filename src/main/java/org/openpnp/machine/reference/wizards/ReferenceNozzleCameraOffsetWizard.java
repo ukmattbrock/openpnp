@@ -250,13 +250,13 @@ public class ReferenceNozzleCameraOffsetWizard extends AbstractConfigurationWiza
     public void createBindings() {
         LengthConverter lengthConverter = new LengthConverter();
 
-        addWrappedBinding(nozzleMarkLocation, "lengthX", nozzleMarkLocationX, "text", lengthConverter);
-        addWrappedBinding(nozzleMarkLocation, "lengthY", nozzleMarkLocationY, "text", lengthConverter);
-        addWrappedBinding(nozzleMarkLocation, "lengthZ", nozzleMarkLocationZ, "text", lengthConverter);
+        bindUndoable(nozzleMarkLocation, "lengthX", nozzleMarkLocationX, "text", lengthConverter);
+        bindUndoable(nozzleMarkLocation, "lengthY", nozzleMarkLocationY, "text", lengthConverter);
+        bindUndoable(nozzleMarkLocation, "lengthZ", nozzleMarkLocationZ, "text", lengthConverter);
 
         bind(AutoBinding.UpdateStrategy.READ_WRITE, nozzle, "headOffsets", nozzleOffsetLocation, "location");
-        addWrappedBinding(nozzleOffsetLocation, "lengthX", nozzleOffsetLocationX, "text", lengthConverter);
-        addWrappedBinding(nozzleOffsetLocation, "lengthY", nozzleOffsetLocationY, "text", lengthConverter);
-        addWrappedBinding(nozzleOffsetLocation, "lengthZ", nozzleOffsetLocationZ, "text", lengthConverter);
+        bindUndoable(nozzleOffsetLocation, "lengthX", nozzleOffsetLocationX, "text", lengthConverter);
+        bindUndoable(nozzleOffsetLocation, "lengthY", nozzleOffsetLocationY, "text", lengthConverter);
+        bindUndoable(nozzleOffsetLocation, "lengthZ", nozzleOffsetLocationZ, "text", lengthConverter);
     }
 }

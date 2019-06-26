@@ -171,14 +171,14 @@ public class OnvifIPCameraConfigurationWizard extends AbstractConfigurationWizar
     @Override
     public void createBindings() {
         IntegerConverter intConverter = new IntegerConverter();
-        addWrappedBinding(camera, "preferredResolution", cboSupportedResolutions, "selectedItem");
-        addWrappedBinding(camera, "resizeWidth", resizeWidthTextField, "text", intConverter);
-        addWrappedBinding(camera, "resizeHeight", resizeHeightTextField, "text", intConverter);
-        addWrappedBinding(camera, "fps", fpsTextField, "text", intConverter);
-        addWrappedBinding(camera, "username", usernameTextField, "text");
-        addWrappedBinding(camera, "password", passwordTextField, "text");
+        bindUndoable(camera, "preferredResolution", cboSupportedResolutions, "selectedItem");
+        bindUndoable(camera, "resizeWidth", resizeWidthTextField, "text", intConverter);
+        bindUndoable(camera, "resizeHeight", resizeHeightTextField, "text", intConverter);
+        bindUndoable(camera, "fps", fpsTextField, "text", intConverter);
+        bindUndoable(camera, "username", usernameTextField, "text");
+        bindUndoable(camera, "password", passwordTextField, "text");
         // Should always be last so that it doesn't trigger multiple camera reloads.
-        addWrappedBinding(camera, "hostIP", ipTextField, "text");
+        bindUndoable(camera, "hostIP", ipTextField, "text");
 
         ComponentDecorators.decorateWithAutoSelect(fpsTextField);
         ComponentDecorators.decorateWithAutoSelect(ipTextField);

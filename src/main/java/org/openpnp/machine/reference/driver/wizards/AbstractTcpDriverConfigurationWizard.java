@@ -72,8 +72,8 @@ public class AbstractTcpDriverConfigurationWizard extends AbstractConfigurationW
     public void createBindings() {
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(driver, "port", port, "text", intConverter);
-        addWrappedBinding(driver, "ipAddress", ipAddress, "text");
+        bindUndoable(driver, "port", port, "text", intConverter);
+        bindUndoable(driver, "ipAddress", ipAddress, "text");
         
         ComponentDecorators.decorateWithAutoSelect(port);
         ComponentDecorators.decorateWithAutoSelect(ipAddress);

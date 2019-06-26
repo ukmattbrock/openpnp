@@ -364,38 +364,38 @@ public class ReferenceDragFeederConfigurationWizard
         BufferedImageIconConverter imageConverter = new BufferedImageIconConverter();
         PercentConverter percentConverter = new PercentConverter();
 
-        addWrappedBinding(feeder, "feedSpeed", textFieldFeedRate, "text", percentConverter);
-        addWrappedBinding(feeder, "actuatorName", textFieldActuatorId, "text");
-        addWrappedBinding(feeder, "peelOffActuatorName", textFieldPeelOffActuatorId, "text");
+        bindUndoable(feeder, "feedSpeed", textFieldFeedRate, "text", percentConverter);
+        bindUndoable(feeder, "actuatorName", textFieldActuatorId, "text");
+        bindUndoable(feeder, "peelOffActuatorName", textFieldPeelOffActuatorId, "text");
 
         MutableLocationProxy feedStartLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "feedStartLocation", feedStartLocation, "location");
-        addWrappedBinding(feedStartLocation, "lengthX", textFieldFeedStartX, "text",
+        bindUndoable(feedStartLocation, "lengthX", textFieldFeedStartX, "text",
                 lengthConverter);
-        addWrappedBinding(feedStartLocation, "lengthY", textFieldFeedStartY, "text",
+        bindUndoable(feedStartLocation, "lengthY", textFieldFeedStartY, "text",
                 lengthConverter);
-        addWrappedBinding(feedStartLocation, "lengthZ", textFieldFeedStartZ, "text",
+        bindUndoable(feedStartLocation, "lengthZ", textFieldFeedStartZ, "text",
                 lengthConverter);
 
         MutableLocationProxy feedEndLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, feeder, "feedEndLocation", feedEndLocation, "location");
-        addWrappedBinding(feedEndLocation, "lengthX", textFieldFeedEndX, "text", lengthConverter);
-        addWrappedBinding(feedEndLocation, "lengthY", textFieldFeedEndY, "text", lengthConverter);
-        addWrappedBinding(feedEndLocation, "lengthZ", textFieldFeedEndZ, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthX", textFieldFeedEndX, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthY", textFieldFeedEndY, "text", lengthConverter);
+        bindUndoable(feedEndLocation, "lengthZ", textFieldFeedEndZ, "text", lengthConverter);
 
-        addWrappedBinding(feeder, "vision.enabled", chckbxVisionEnabled, "selected");
-        addWrappedBinding(feeder, "vision.templateImage", labelTemplateImage, "icon",
+        bindUndoable(feeder, "vision.enabled", chckbxVisionEnabled, "selected");
+        bindUndoable(feeder, "vision.templateImage", labelTemplateImage, "icon",
                 imageConverter);
 
-        addWrappedBinding(feeder, "vision.areaOfInterest.x", textFieldAoiX, "text", intConverter);
-        addWrappedBinding(feeder, "vision.areaOfInterest.y", textFieldAoiY, "text", intConverter);
+        bindUndoable(feeder, "vision.areaOfInterest.x", textFieldAoiX, "text", intConverter);
+        bindUndoable(feeder, "vision.areaOfInterest.y", textFieldAoiY, "text", intConverter);
 
-        addWrappedBinding(feeder, "vision.areaOfInterest.width", textFieldAoiWidth, "text",
+        bindUndoable(feeder, "vision.areaOfInterest.width", textFieldAoiWidth, "text",
                 intConverter);
-        addWrappedBinding(feeder, "vision.areaOfInterest.height", textFieldAoiHeight, "text",
+        bindUndoable(feeder, "vision.areaOfInterest.height", textFieldAoiHeight, "text",
                 intConverter);
         
-        addWrappedBinding(feeder, "backoffDistance", backoffDistTf, "text", lengthConverter);
+        bindUndoable(feeder, "backoffDistance", backoffDistTf, "text", lengthConverter);
 
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldFeedRate);
         ComponentDecorators.decorateWithAutoSelect(textFieldActuatorId);

@@ -79,7 +79,7 @@ public class ImageCameraConfigurationWizard extends AbstractConfigurationWizard 
 
     @Override
     public void createBindings() {
-        addWrappedBinding(camera, "sourceUri", textFieldSourceUrl, "text");
+        bindUndoable(camera, "sourceUri", textFieldSourceUrl, "text");
         ComponentDecorators.decorateWithAutoSelect(textFieldSourceUrl);
     }
 

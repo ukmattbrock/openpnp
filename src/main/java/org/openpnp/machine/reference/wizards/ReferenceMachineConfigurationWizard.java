@@ -138,15 +138,15 @@ public class ReferenceMachineConfigurationWizard extends AbstractConfigurationWi
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         LengthConverter lengthConverter = new LengthConverter();
 
-        addWrappedBinding(this, "driverClassName", comboBoxDriver, "selectedItem");
-        addWrappedBinding(machine, "homeAfterEnabled", checkBoxHomeAfterEnabled, "selected");
+        bindUndoable(this, "driverClassName", comboBoxDriver, "selectedItem");
+        bindUndoable(machine, "homeAfterEnabled", checkBoxHomeAfterEnabled, "selected");
 
         MutableLocationProxy discardLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, machine, "discardLocation", discardLocation, "location");
-        addWrappedBinding(discardLocation, "lengthX", discardXTf, "text", lengthConverter);
-        addWrappedBinding(discardLocation, "lengthY", discardYTf, "text", lengthConverter);
-        addWrappedBinding(discardLocation, "lengthZ", discardZTf, "text", lengthConverter);
-        addWrappedBinding(discardLocation, "rotation", discardCTf, "text", doubleConverter);
+        bindUndoable(discardLocation, "lengthX", discardXTf, "text", lengthConverter);
+        bindUndoable(discardLocation, "lengthY", discardYTf, "text", lengthConverter);
+        bindUndoable(discardLocation, "lengthZ", discardZTf, "text", lengthConverter);
+        bindUndoable(discardLocation, "rotation", discardCTf, "text", doubleConverter);
         
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(discardXTf);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(discardYTf);

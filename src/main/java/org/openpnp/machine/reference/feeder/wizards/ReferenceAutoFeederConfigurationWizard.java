@@ -144,13 +144,13 @@ public class ReferenceAutoFeederConfigurationWizard
         DoubleConverter doubleConverter =
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
 
-        addWrappedBinding(feeder, "actuatorName", actuatorName, "text");
-        addWrappedBinding(feeder, "actuatorType", actuatorType, "selectedItem");
-        addWrappedBinding(feeder, "actuatorValue", actuatorValue, "text", doubleConverter);
+        bindUndoable(feeder, "actuatorName", actuatorName, "text");
+        bindUndoable(feeder, "actuatorType", actuatorType, "selectedItem");
+        bindUndoable(feeder, "actuatorValue", actuatorValue, "text", doubleConverter);
         
-        addWrappedBinding(feeder, "postPickActuatorName", postPickActuatorName, "text");
-        addWrappedBinding(feeder, "postPickActuatorType", postPickActuatorType, "selectedItem");
-        addWrappedBinding(feeder, "postPickActuatorValue", postPickActuatorValue, "text", doubleConverter);
+        bindUndoable(feeder, "postPickActuatorName", postPickActuatorName, "text");
+        bindUndoable(feeder, "postPickActuatorType", postPickActuatorType, "selectedItem");
+        bindUndoable(feeder, "postPickActuatorValue", postPickActuatorValue, "text", doubleConverter);
         
         ComponentDecorators.decorateWithAutoSelect(actuatorName);
         ComponentDecorators.decorateWithAutoSelect(actuatorValue);

@@ -407,30 +407,30 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
 		IntegerConverter intConverter = new IntegerConverter();
 		DoubleConverter doubleConverter = new DoubleConverter(Configuration.get().getLengthDisplayFormat());
 
-		addWrappedBinding(feeder, "part", comboBoxPart, "selectedItem");
-        addWrappedBinding(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
-        addWrappedBinding(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
+		bindUndoable(feeder, "part", comboBoxPart, "selectedItem");
+        bindUndoable(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
+        bindUndoable(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
 
 		if (includePickLocation) {
 			MutableLocationProxy location = new MutableLocationProxy();
 			bind(UpdateStrategy.READ_WRITE, feeder, "location", location, "location");
-			addWrappedBinding(location, "lengthX", textFieldLocationX, "text", lengthConverter);
-			addWrappedBinding(location, "lengthY", textFieldLocationY, "text", lengthConverter);
-			addWrappedBinding(location, "rotation", textFieldComponentRotation, "text", doubleConverter);
-			addWrappedBinding(location, "lengthZ", textFieldComponentZHeight, "text", lengthConverter);
+			bindUndoable(location, "lengthX", textFieldLocationX, "text", lengthConverter);
+			bindUndoable(location, "lengthY", textFieldLocationY, "text", lengthConverter);
+			bindUndoable(location, "rotation", textFieldComponentRotation, "text", doubleConverter);
+			bindUndoable(location, "lengthZ", textFieldComponentZHeight, "text", lengthConverter);
 
 			MutableLocationProxy firstRowLastComponentlocation = new MutableLocationProxy();
 			bind(UpdateStrategy.READ_WRITE, feeder, "firstRowLastComponentLocation", firstRowLastComponentlocation,
 					"location");
-			addWrappedBinding(firstRowLastComponentlocation, "lengthX", textFieldFirstRowLastLocationX, "text",
+			bindUndoable(firstRowLastComponentlocation, "lengthX", textFieldFirstRowLastLocationX, "text",
 					lengthConverter);
-			addWrappedBinding(firstRowLastComponentlocation, "lengthY", textFieldFirstRowLastLocationY, "text",
+			bindUndoable(firstRowLastComponentlocation, "lengthY", textFieldFirstRowLastLocationY, "text",
 					lengthConverter);
 
 			MutableLocationProxy lastComponentlocation = new MutableLocationProxy();
 			bind(UpdateStrategy.READ_WRITE, feeder, "lastComponentLocation", lastComponentlocation, "location");
-			addWrappedBinding(lastComponentlocation, "lengthX", textFieldLastLocationX, "text", lengthConverter);
-			addWrappedBinding(lastComponentlocation, "lengthY", textFieldLastLocationY, "text", lengthConverter);
+			bindUndoable(lastComponentlocation, "lengthX", textFieldLastLocationX, "text", lengthConverter);
+			bindUndoable(lastComponentlocation, "lengthY", textFieldLastLocationY, "text", lengthConverter);
 
 			ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldLocationX);
 			ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldLocationY);
@@ -444,13 +444,13 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
 
 		MutableLocationProxy offsets = new MutableLocationProxy();
 		bind(UpdateStrategy.READ_WRITE, feeder, "offsets", offsets, "location");
-		addWrappedBinding(offsets, "lengthX", textFieldOffsetsX, "text", lengthConverter);
-		addWrappedBinding(offsets, "lengthY", textFieldOffsetsY, "text", lengthConverter);
+		bindUndoable(offsets, "lengthX", textFieldOffsetsX, "text", lengthConverter);
+		bindUndoable(offsets, "lengthY", textFieldOffsetsY, "text", lengthConverter);
 
-		addWrappedBinding(feeder, "trayCountCols", textFieldTrayCountCols, "text", intConverter);
-		addWrappedBinding(feeder, "trayCountRows", textFieldTrayCountRows, "text", intConverter);
-		addWrappedBinding(feeder, "feedCount", textFieldFeedCount, "text", intConverter);
-		addWrappedBinding(feeder, "trayRotation", textFieldTrayRotation, "text", doubleConverter);
+		bindUndoable(feeder, "trayCountCols", textFieldTrayCountCols, "text", intConverter);
+		bindUndoable(feeder, "trayCountRows", textFieldTrayCountRows, "text", intConverter);
+		bindUndoable(feeder, "feedCount", textFieldFeedCount, "text", intConverter);
+		bindUndoable(feeder, "trayRotation", textFieldTrayRotation, "text", doubleConverter);
 
 		ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldOffsetsX);
 		ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldOffsetsY);

@@ -78,6 +78,6 @@ public class ReferenceNozzleToolChangerWizard extends AbstractConfigurationWizar
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(nozzle, "changerEnabled", chckbxChangerEnabled, "selected");
+        bindUndoable(nozzle, "changerEnabled", chckbxChangerEnabled, "selected");
     }
 }

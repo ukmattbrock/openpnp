@@ -150,16 +150,16 @@ public class GcodeDriverSettings extends AbstractConfigurationWizard {
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         DoubleConverter doubleConverterFine = new DoubleConverter("%f");
         
-        addWrappedBinding(driver, "units", unitsCb, "selectedItem");
-        addWrappedBinding(driver, "maxFeedRate", maxFeedRateTf, "text", intConverter);
-        addWrappedBinding(driver, "backlashOffsetX", backlashOffsetXTf, "text", doubleConverter);
-        addWrappedBinding(driver, "backlashOffsetY", backlashOffsetYTf, "text", doubleConverter);
-        addWrappedBinding(driver, "nonSquarenessFactor", nonSquarenessFactorTf, "text", doubleConverterFine);
-        addWrappedBinding(driver, "backlashFeedRateFactor", backlashFeedRateFactorTf, "text", doubleConverter);
-        addWrappedBinding(driver, "timeoutMilliseconds", commandTimeoutTf, "text", intConverter);
-        addWrappedBinding(driver, "connectWaitTimeMilliseconds", connectWaitTimeTf, "text", intConverter);
-        addWrappedBinding(driver, "name", driverName, "text");
-        addWrappedBinding(driver, "visualHomingEnabled", visualHoming, "selected");
+        bindUndoable(driver, "units", unitsCb, "selectedItem");
+        bindUndoable(driver, "maxFeedRate", maxFeedRateTf, "text", intConverter);
+        bindUndoable(driver, "backlashOffsetX", backlashOffsetXTf, "text", doubleConverter);
+        bindUndoable(driver, "backlashOffsetY", backlashOffsetYTf, "text", doubleConverter);
+        bindUndoable(driver, "nonSquarenessFactor", nonSquarenessFactorTf, "text", doubleConverterFine);
+        bindUndoable(driver, "backlashFeedRateFactor", backlashFeedRateFactorTf, "text", doubleConverter);
+        bindUndoable(driver, "timeoutMilliseconds", commandTimeoutTf, "text", intConverter);
+        bindUndoable(driver, "connectWaitTimeMilliseconds", connectWaitTimeTf, "text", intConverter);
+        bindUndoable(driver, "name", driverName, "text");
+        bindUndoable(driver, "visualHomingEnabled", visualHoming, "selected");
         
         ComponentDecorators.decorateWithAutoSelect(maxFeedRateTf);
         ComponentDecorators.decorateWithAutoSelect(backlashOffsetXTf);

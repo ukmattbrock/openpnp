@@ -66,6 +66,6 @@ public class ReferencePnpJobProcessorConfigurationWizard extends AbstractConfigu
 
     @Override
     public void createBindings() {
-        addWrappedBinding(jobProcessor, "jobOrder", comboBoxJobOrder, "selectedItem");
+        bindUndoable(jobProcessor, "jobOrder", comboBoxJobOrder, "selectedItem");
     }
 }

@@ -165,16 +165,16 @@ public class ReferenceCameraTransformsConfigurationWizard extends AbstractConfig
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
         LengthConverter lengthConverter = new LengthConverter();
 
-        addWrappedBinding(referenceCamera, "rotation", textFieldRotation, "text", doubleConverter);
-        addWrappedBinding(referenceCamera, "offsetX", textFieldOffsetX, "text", intConverter);
-        addWrappedBinding(referenceCamera, "offsetY", textFieldOffsetY, "text", intConverter);
-        addWrappedBinding(referenceCamera, "flipX", chckbxFlipX, "selected");
-        addWrappedBinding(referenceCamera, "flipY", checkBoxFlipY, "selected");
-        addWrappedBinding(referenceCamera, "cropWidth", cropWidthTextField, "text", intConverter);
-        addWrappedBinding(referenceCamera, "cropHeight", cropHeightTextField, "text", intConverter);
-        addWrappedBinding(referenceCamera, "scaleWidth", scaleWidthTf, "text", intConverter);
-        addWrappedBinding(referenceCamera, "scaleHeight", scaleHeightTf, "text", intConverter);
-        addWrappedBinding(referenceCamera, "deinterlace", deinterlaceChk, "selected");
+        bindUndoable(referenceCamera, "rotation", textFieldRotation, "text", doubleConverter);
+        bindUndoable(referenceCamera, "offsetX", textFieldOffsetX, "text", intConverter);
+        bindUndoable(referenceCamera, "offsetY", textFieldOffsetY, "text", intConverter);
+        bindUndoable(referenceCamera, "flipX", chckbxFlipX, "selected");
+        bindUndoable(referenceCamera, "flipY", checkBoxFlipY, "selected");
+        bindUndoable(referenceCamera, "cropWidth", cropWidthTextField, "text", intConverter);
+        bindUndoable(referenceCamera, "cropHeight", cropHeightTextField, "text", intConverter);
+        bindUndoable(referenceCamera, "scaleWidth", scaleWidthTf, "text", intConverter);
+        bindUndoable(referenceCamera, "scaleHeight", scaleHeightTf, "text", intConverter);
+        bindUndoable(referenceCamera, "deinterlace", deinterlaceChk, "selected");
 
 
         ComponentDecorators.decorateWithAutoSelect(textFieldRotation);

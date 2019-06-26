@@ -235,47 +235,47 @@ public class ReferenceNozzleTipToolChangerWizard extends AbstractConfigurationWi
         MutableLocationProxy changerStartLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, nozzleTip, "changerStartLocation", changerStartLocation,
                 "location");
-        addWrappedBinding(changerStartLocation, "lengthX", textFieldChangerStartX, "text",
+        bindUndoable(changerStartLocation, "lengthX", textFieldChangerStartX, "text",
                 lengthConverter);
-        addWrappedBinding(changerStartLocation, "lengthY", textFieldChangerStartY, "text",
+        bindUndoable(changerStartLocation, "lengthY", textFieldChangerStartY, "text",
                 lengthConverter);
-        addWrappedBinding(changerStartLocation, "lengthZ", textFieldChangerStartZ, "text",
+        bindUndoable(changerStartLocation, "lengthZ", textFieldChangerStartZ, "text",
                 lengthConverter);
-        addWrappedBinding(nozzleTip, "changerStartToMidSpeed", textFieldChangerStartToMidSpeed, "text",
+        bindUndoable(nozzleTip, "changerStartToMidSpeed", textFieldChangerStartToMidSpeed, "text",
                 doubleConverter);
 
         MutableLocationProxy changerMidLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, nozzleTip, "changerMidLocation", changerMidLocation,
                 "location");
-        addWrappedBinding(changerMidLocation, "lengthX", textFieldChangerMidX, "text",
+        bindUndoable(changerMidLocation, "lengthX", textFieldChangerMidX, "text",
                 lengthConverter);
-        addWrappedBinding(changerMidLocation, "lengthY", textFieldChangerMidY, "text",
+        bindUndoable(changerMidLocation, "lengthY", textFieldChangerMidY, "text",
                 lengthConverter);
-        addWrappedBinding(changerMidLocation, "lengthZ", textFieldChangerMidZ, "text",
+        bindUndoable(changerMidLocation, "lengthZ", textFieldChangerMidZ, "text",
                 lengthConverter);
-        addWrappedBinding(nozzleTip, "changerMidToMid2Speed", textFieldChangerMidToMid2Speed, "text",
+        bindUndoable(nozzleTip, "changerMidToMid2Speed", textFieldChangerMidToMid2Speed, "text",
                 doubleConverter);
 
         MutableLocationProxy changerMidLocation2 = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, nozzleTip, "changerMidLocation2", changerMidLocation2,
                 "location");
-        addWrappedBinding(changerMidLocation2, "lengthX", textFieldMidX2, "text",
+        bindUndoable(changerMidLocation2, "lengthX", textFieldMidX2, "text",
                 lengthConverter);
-        addWrappedBinding(changerMidLocation2, "lengthY", textFieldMidY2, "text",
+        bindUndoable(changerMidLocation2, "lengthY", textFieldMidY2, "text",
                 lengthConverter);
-        addWrappedBinding(changerMidLocation2, "lengthZ", textFieldMidZ2, "text",
+        bindUndoable(changerMidLocation2, "lengthZ", textFieldMidZ2, "text",
                 lengthConverter);
-        addWrappedBinding(nozzleTip, "changerMid2ToEndSpeed", textFieldChangerMid2ToEndSpeed, "text",
+        bindUndoable(nozzleTip, "changerMid2ToEndSpeed", textFieldChangerMid2ToEndSpeed, "text",
                 doubleConverter);
 
         MutableLocationProxy changerEndLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, nozzleTip, "changerEndLocation", changerEndLocation,
                 "location");
-        addWrappedBinding(changerEndLocation, "lengthX", textFieldChangerEndX, "text",
+        bindUndoable(changerEndLocation, "lengthX", textFieldChangerEndX, "text",
                 lengthConverter);
-        addWrappedBinding(changerEndLocation, "lengthY", textFieldChangerEndY, "text",
+        bindUndoable(changerEndLocation, "lengthY", textFieldChangerEndY, "text",
                 lengthConverter);
-        addWrappedBinding(changerEndLocation, "lengthZ", textFieldChangerEndZ, "text",
+        bindUndoable(changerEndLocation, "lengthZ", textFieldChangerEndZ, "text",
                 lengthConverter);
         
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldChangerStartX);

@@ -375,17 +375,17 @@ public class ReferenceNozzleTipCalibrationWizard extends AbstractConfigurationWi
         IntegerConverter intConverter = new IntegerConverter();
         LengthConverter lengthConverter = new LengthConverter();
         
-        addWrappedBinding(nozzleTip.getCalibration(), "enabled", calibrationEnabledCheckbox,
+        bindUndoable(nozzleTip.getCalibration(), "enabled", calibrationEnabledCheckbox,
                 "selected");
-        addWrappedBinding(nozzleTip.getCalibration(), "angleSubdivisions", angleIncrementsTf,
+        bindUndoable(nozzleTip.getCalibration(), "angleSubdivisions", angleIncrementsTf,
                 "text", intConverter);
-        addWrappedBinding(nozzleTip.getCalibration(), "allowMisdetections", allowMisdetectsTf,
+        bindUndoable(nozzleTip.getCalibration(), "allowMisdetections", allowMisdetectsTf,
                 "text", intConverter);
-        addWrappedBinding(nozzleTip.getCalibration(), "offsetThresholdLength", offsetThresholdTf,
+        bindUndoable(nozzleTip.getCalibration(), "offsetThresholdLength", offsetThresholdTf,
                 "text", lengthConverter);
-        addWrappedBinding(nozzleTip.getCalibration(), "calibrationZOffset", calibrationZOffsetTf,
+        bindUndoable(nozzleTip.getCalibration(), "calibrationZOffset", calibrationZOffsetTf,
                 "text", lengthConverter);
-        addWrappedBinding(nozzleTip.getCalibration(), "recalibrationTrigger",
+        bindUndoable(nozzleTip.getCalibration(), "recalibrationTrigger",
                 recalibrationCb, "selectedItem");
         
         bind(UpdateStrategy.READ, this, "calibrationStatus", lblCalibrationStatus, "text");

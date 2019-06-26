@@ -83,8 +83,8 @@ public class WebcamConfigurationWizard extends AbstractConfigurationWizard
         // The order of the properties is important. We want all the booleans
         // to be set before we set the driver because setting the driver
         // applies all the settings.
-        addWrappedBinding(camera, "forceGray", chckbxGray, "selected");
-        addWrappedBinding(camera, "deviceId", comboBoxDeviceId, "selectedItem");
+        bindUndoable(camera, "forceGray", chckbxGray, "selected");
+        bindUndoable(camera, "deviceId", comboBoxDeviceId, "selectedItem");
     }
 
     private void updateList() {

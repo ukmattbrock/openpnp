@@ -163,8 +163,8 @@ public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigu
     public void createBindings() {
     	IntegerConverter intConverter = new IntegerConverter();
     	
-    	addWrappedBinding(fiducialLocator, "enabledAveraging", enabledAveragingCheckbox, "selected");
-    	addWrappedBinding(fiducialLocator, "repeatFiducialRecognition", textFieldRepeatFiducialRecognition, "text", intConverter);
+    	bindUndoable(fiducialLocator, "enabledAveraging", enabledAveragingCheckbox, "selected");
+    	bindUndoable(fiducialLocator, "repeatFiducialRecognition", textFieldRepeatFiducialRecognition, "text", intConverter);
     	
     	ComponentDecorators.decorateWithAutoSelect(textFieldRepeatFiducialRecognition);
     }

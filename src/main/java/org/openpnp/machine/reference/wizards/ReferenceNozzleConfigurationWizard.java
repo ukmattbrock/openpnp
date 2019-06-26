@@ -193,17 +193,17 @@ public class ReferenceNozzleConfigurationWizard extends AbstractConfigurationWiz
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
 
-        addWrappedBinding(nozzle, "name", nameTf, "text");
+        bindUndoable(nozzle, "name", nameTf, "text");
         MutableLocationProxy headOffsets = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, nozzle, "headOffsets", headOffsets, "location");
-        addWrappedBinding(headOffsets, "lengthX", locationX, "text", lengthConverter);
-        addWrappedBinding(headOffsets, "lengthY", locationY, "text", lengthConverter);
-        addWrappedBinding(headOffsets, "lengthZ", locationZ, "text", lengthConverter);
+        bindUndoable(headOffsets, "lengthX", locationX, "text", lengthConverter);
+        bindUndoable(headOffsets, "lengthY", locationY, "text", lengthConverter);
+        bindUndoable(headOffsets, "lengthZ", locationZ, "text", lengthConverter);
 
-        addWrappedBinding(nozzle, "limitRotation", chckbxLimitRotationTo, "selected");
-        addWrappedBinding(nozzle, "safeZ", textFieldSafeZ, "text", lengthConverter);
-        addWrappedBinding(nozzle, "pickDwellMilliseconds", pickDwellTf, "text", intConverter);
-        addWrappedBinding(nozzle, "placeDwellMilliseconds", placeDwellTf, "text", intConverter);
+        bindUndoable(nozzle, "limitRotation", chckbxLimitRotationTo, "selected");
+        bindUndoable(nozzle, "safeZ", textFieldSafeZ, "text", lengthConverter);
+        bindUndoable(nozzle, "pickDwellMilliseconds", pickDwellTf, "text", intConverter);
+        bindUndoable(nozzle, "placeDwellMilliseconds", placeDwellTf, "text", intConverter);
 
         ComponentDecorators.decorateWithAutoSelect(nameTf);
         ComponentDecorators.decorateWithAutoSelect(pickDwellTf);

@@ -366,17 +366,17 @@ public class ReferenceSlotAutoFeederConfigurationWizard
         DoubleConverter doubleConverter =
                 new DoubleConverter(Configuration.get().getLengthDisplayFormat());
 
-        addWrappedBinding(feeder, "actuatorName", actuatorName, "text");
-        addWrappedBinding(feeder, "actuatorType", actuatorType, "selectedItem");
-        addWrappedBinding(feeder, "actuatorValue", actuatorValue, "text", doubleConverter);
+        bindUndoable(feeder, "actuatorName", actuatorName, "text");
+        bindUndoable(feeder, "actuatorType", actuatorType, "selectedItem");
+        bindUndoable(feeder, "actuatorValue", actuatorValue, "text", doubleConverter);
         
-        addWrappedBinding(feeder, "postPickActuatorName", postPickActuatorName, "text");
-        addWrappedBinding(feeder, "postPickActuatorType", postPickActuatorType, "selectedItem");
-        addWrappedBinding(feeder, "postPickActuatorValue", postPickActuatorValue, "text", doubleConverter);
+        bindUndoable(feeder, "postPickActuatorName", postPickActuatorName, "text");
+        bindUndoable(feeder, "postPickActuatorType", postPickActuatorType, "selectedItem");
+        bindUndoable(feeder, "postPickActuatorValue", postPickActuatorValue, "text", doubleConverter);
         
         
-        addWrappedBinding(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
-        addWrappedBinding(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
+        bindUndoable(feeder, "feedRetryCount", retryCountTf, "text", intConverter);
+        bindUndoable(feeder, "pickRetryCount", pickRetryCount, "text", intConverter);
 
         /**
          * Note that we set up the bindings here differently than everywhere else. In most
@@ -387,7 +387,7 @@ public class ReferenceSlotAutoFeederConfigurationWizard
          * to work fine. Might not matter in most other cases. 
          */
         MutableLocationProxy pickLocation = new MutableLocationProxy();
-        addWrappedBinding(feeder, "location", pickLocation, "location");
+        bindUndoable(feeder, "location", pickLocation, "location");
         bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthX", xPickLocTf, "text", lengthConverter);
         bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthY", yPickLocTf, "text", lengthConverter);
         bind(UpdateStrategy.READ_WRITE, pickLocation, "lengthZ", zPickLocTf, "text", lengthConverter);

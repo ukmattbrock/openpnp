@@ -191,17 +191,17 @@ public class ReferenceBottomVisionConfigurationWizard extends AbstractConfigurat
     
     @Override
     public void createBindings() {
-        addWrappedBinding(bottomVision, "enabled", enabledCheckbox, "selected");
-        addWrappedBinding(bottomVision, "preRotate", preRotCheckbox, "selected");
+        bindUndoable(bottomVision, "enabled", enabledCheckbox, "selected");
+        bindUndoable(bottomVision, "preRotate", preRotCheckbox, "selected");
         
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
         DoubleConverter doubleConverter = new DoubleConverter(Configuration.get()
                                                                            .getLengthDisplayFormat());
 
-        addWrappedBinding(bottomVision, "maxVisionPasses", textFieldMaxVisionPasses, "text", intConverter);
-        addWrappedBinding(bottomVision, "maxLinearOffset", textFieldMaxLinearOffset, "text", lengthConverter);
-        addWrappedBinding(bottomVision, "maxAngularOffset", textFieldMaxAngularOffset, "text", doubleConverter);
+        bindUndoable(bottomVision, "maxVisionPasses", textFieldMaxVisionPasses, "text", intConverter);
+        bindUndoable(bottomVision, "maxLinearOffset", textFieldMaxLinearOffset, "text", lengthConverter);
+        bindUndoable(bottomVision, "maxAngularOffset", textFieldMaxAngularOffset, "text", doubleConverter);
         
         ComponentDecorators.decorateWithAutoSelect(textFieldMaxVisionPasses);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldMaxLinearOffset);

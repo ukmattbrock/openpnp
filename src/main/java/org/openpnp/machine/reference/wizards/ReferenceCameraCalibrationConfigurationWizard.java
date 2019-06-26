@@ -59,7 +59,7 @@ public class ReferenceCameraCalibrationConfigurationWizard extends AbstractConfi
 
     @Override
     public void createBindings() {
-        addWrappedBinding(referenceCamera.getCalibration(), "enabled", calibrationEnabledChk,
+        bindUndoable(referenceCamera.getCalibration(), "enabled", calibrationEnabledChk,
                 "selected");
     }
 

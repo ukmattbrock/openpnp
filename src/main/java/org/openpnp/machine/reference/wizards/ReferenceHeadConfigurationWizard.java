@@ -191,22 +191,22 @@ public class ReferenceHeadConfigurationWizard extends AbstractConfigurationWizar
 
         MutableLocationProxy parkLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, head, "parkLocation", parkLocation, "location");
-        addWrappedBinding(parkLocation, "lengthX", parkX, "text", lengthConverter);
-        addWrappedBinding(parkLocation, "lengthY", parkY, "text", lengthConverter);
+        bindUndoable(parkLocation, "lengthX", parkX, "text", lengthConverter);
+        bindUndoable(parkLocation, "lengthY", parkY, "text", lengthConverter);
 
         MutableLocationProxy minLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, head, "minLocation", minLocation, "location");
-        addWrappedBinding(minLocation, "lengthX", minX, "text", lengthConverter);
-        addWrappedBinding(minLocation, "lengthY", minY, "text", lengthConverter);
+        bindUndoable(minLocation, "lengthX", minX, "text", lengthConverter);
+        bindUndoable(minLocation, "lengthY", minY, "text", lengthConverter);
 
         MutableLocationProxy maxLocation = new MutableLocationProxy();
         bind(UpdateStrategy.READ_WRITE, head, "maxLocation", maxLocation, "location");
-        addWrappedBinding(maxLocation, "lengthX", maxX, "text", lengthConverter);
-        addWrappedBinding(maxLocation, "lengthY", maxY, "text", lengthConverter);
+        bindUndoable(maxLocation, "lengthX", maxX, "text", lengthConverter);
+        bindUndoable(maxLocation, "lengthY", maxY, "text", lengthConverter);
 
-        addWrappedBinding(head, "softLimitsEnabled", softLimitsEnabled, "selected");
+        bindUndoable(head, "softLimitsEnabled", softLimitsEnabled, "selected");
 
-        addWrappedBinding(head, "zProbeActuatorName", zProbeActuatorName, "text");
+        bindUndoable(head, "zProbeActuatorName", zProbeActuatorName, "text");
 
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(parkX);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(parkY);

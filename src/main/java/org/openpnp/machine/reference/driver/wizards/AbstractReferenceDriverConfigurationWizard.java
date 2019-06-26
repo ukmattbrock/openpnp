@@ -297,19 +297,19 @@ public class AbstractReferenceDriverConfigurationWizard extends AbstractConfigur
     public void createBindings() {
         IntegerConverter integerConverter = new IntegerConverter();
 
-        addWrappedBinding(driver, "communicationsType", commsMethod, "text");
-        addWrappedBinding(driver, "connectionKeepAlive", connectionKeepAlive, "selected");
+        bindUndoable(driver, "communicationsType", commsMethod, "text");
+        bindUndoable(driver, "connectionKeepAlive", connectionKeepAlive, "selected");
         
-        addWrappedBinding(driver, "portName", comboBoxPort, "selectedItem");
-        addWrappedBinding(driver, "baud", comboBoxBaud, "selectedItem");
-        addWrappedBinding(driver, "parity", parityComboBox, "selectedItem");
-        addWrappedBinding(driver, "stopBits", stopBitsComboBox, "selectedItem");
-        addWrappedBinding(driver, "dataBits", dataBitsComboBox, "selectedItem");
-        addWrappedBinding(driver, "flowControl", flowControlComboBox, "selectedItem");
-        addWrappedBinding(driver, "setDtr", setDtrCheckbox, "selected");
-        addWrappedBinding(driver, "setRts", setRtsCheckbox, "selected");        
+        bindUndoable(driver, "portName", comboBoxPort, "selectedItem");
+        bindUndoable(driver, "baud", comboBoxBaud, "selectedItem");
+        bindUndoable(driver, "parity", parityComboBox, "selectedItem");
+        bindUndoable(driver, "stopBits", stopBitsComboBox, "selectedItem");
+        bindUndoable(driver, "dataBits", dataBitsComboBox, "selectedItem");
+        bindUndoable(driver, "flowControl", flowControlComboBox, "selectedItem");
+        bindUndoable(driver, "setDtr", setDtrCheckbox, "selected");
+        bindUndoable(driver, "setRts", setRtsCheckbox, "selected");        
         
-        addWrappedBinding(driver, "ipAddress", ipAddressTextField, "text");
-        addWrappedBinding(driver, "port", portTextField, "text", integerConverter);
+        bindUndoable(driver, "ipAddress", ipAddressTextField, "text");
+        bindUndoable(driver, "port", portTextField, "text", integerConverter);
     }
 }

@@ -34,10 +34,7 @@ public class BeanUtils {
     
     public static AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
             Object target, String targetProperty) {
-        AutoBinding binding = Bindings.createAutoBinding(updateStrategy, source,
-                BeanProperty.create(sourceProperty), target, BeanProperty.create(targetProperty));
-        binding.bind();
-        return binding;
+        return bind(updateStrategy, source, sourceProperty, target, targetProperty, null);
     }
 
     public static AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,

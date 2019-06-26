@@ -661,7 +661,7 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
             JSlider slider, JLabel label, JTextField value, JLabel def) {
         IntegerConverter intConverter = new IntegerConverter();
 
-        bind(UpdateStrategy.READ_WRITE, camera, property + ".auto", auto, "selected");
+        addWrappedBinding(camera, property + ".auto", auto, "selected");
 
         bind(UpdateStrategy.READ, camera, property + ".min", min, "text", intConverter);
         bind(UpdateStrategy.READ, camera, property + ".max", max, "text", intConverter);
@@ -669,8 +669,8 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
 
         bind(UpdateStrategy.READ, camera, property + ".min", slider, "minimum");
         bind(UpdateStrategy.READ, camera, property + ".max", slider, "maximum");
-        bind(UpdateStrategy.READ_WRITE, camera, property + ".value", slider, "value");
-        bind(UpdateStrategy.READ_WRITE, camera, property + ".value", value, "text", intConverter);
+        addWrappedBinding(camera, property + ".value", slider, "value");
+        addWrappedBinding(camera, property + ".value", value, "text", intConverter);
 
         bind(UpdateStrategy.READ, camera, property + ".autoSupported", auto, "enabled");
         bind(UpdateStrategy.READ, camera, property + ".supported", slider, "enabled");

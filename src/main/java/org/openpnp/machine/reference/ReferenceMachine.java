@@ -135,6 +135,7 @@ public class ReferenceMachine extends AbstractMachine {
             try {
                 driver.setEnabled(true);
                 this.enabled = true;
+                firePropertyChange("enabled", null, enabled);
             }
             catch (Exception e) {
                 fireMachineEnableFailed(e.getMessage());
@@ -146,6 +147,7 @@ public class ReferenceMachine extends AbstractMachine {
             try {
                 driver.setEnabled(false);
                 this.enabled = false;
+                firePropertyChange("enabled", null, enabled);
             }
             catch (Exception e) {
                 fireMachineDisableFailed(e.getMessage());

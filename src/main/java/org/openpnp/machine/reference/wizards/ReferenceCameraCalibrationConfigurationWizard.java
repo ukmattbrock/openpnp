@@ -59,10 +59,8 @@ public class ReferenceCameraCalibrationConfigurationWizard extends AbstractConfi
 
     @Override
     public void createBindings() {
-        bind(UpdateStrategy.READ_WRITE, referenceCamera.getCalibration(), "enabled",
-                calibrationEnabledChk, "selected");
-        // addWrappedBinding(referenceCamera.getCalibration(), "enabled", calibrationEnabledChk,
-        // "selected");
+        addWrappedBinding(referenceCamera.getCalibration(), "enabled", calibrationEnabledChk,
+                "selected");
     }
 
     private Action startCalibration = new AbstractAction("Start Lens Calibration") {

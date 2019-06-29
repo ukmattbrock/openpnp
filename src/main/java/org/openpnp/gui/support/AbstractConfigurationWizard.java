@@ -21,6 +21,8 @@ package org.openpnp.gui.support;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
@@ -57,36 +59,11 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
 
     public abstract void createBindings();
 
-    public void validateInput() throws Exception {
-
-    }
-
-    /**
-     * This method should be called when the caller wishes to notify the user that there has been a
-     * change to the state of the wizard. This is done automatically for wrapped bindings but this
-     * method is provided for operations that do not use wrapped bindings.
-     */
-    protected void notifyChange() {
-    }
-
     /**
      * When overriding this method you should call super.loadFromModel() AFTER doing any work that
      * you need to do, not before.
      */
     protected void loadFromModel() {
-    }
-
-    /**
-     * When overriding this method you should call super.loadFromModel() AFTER doing any work that
-     * you need to do, not before.
-     */
-    protected void saveToModel() {
-        try {
-            validateInput();
-        }
-        catch (Exception e) {
-            MessageBoxes.errorBox(getTopLevelAncestor(), "Validation Error", e.getMessage());
-        }
     }
 
     public AutoBinding bindUndoable(Object source, String sourceProperty,

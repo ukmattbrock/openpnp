@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -287,10 +288,6 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					textFieldFeedCount.setText("0");
-					int componentleft = Integer.parseInt(textFieldTrayCountCols.getText())
-							* Integer.parseInt(textFieldTrayCountRows.getText())
-							- Integer.parseInt(textFieldFeedCount.getText());
-					lblComponentCount.setText("Components left: " + String.valueOf(componentleft));
 				}
 			});
 			btnResetFeedCount.setHorizontalAlignment(SwingConstants.LEFT);
@@ -460,25 +457,33 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
 		ComponentDecorators.decorateWithAutoSelect(textFieldTrayCountRows);
 		ComponentDecorators.decorateWithAutoSelect(textFieldTrayCountCols);
 		ComponentDecorators.decorateWithAutoSelect(textFieldFeedCount);
+
+		// Update the number of components left when any of these properties change.
+        bind(UpdateStrategy.READ, feeder, "feedCount", this, "feedCount");
+        bind(UpdateStrategy.READ, feeder, "trayCountCols", this, "feedCount");
+        bind(UpdateStrategy.READ, feeder, "trayCountRows", this, "feedCount");
 	}
-
-	@Override
-	protected void saveToModel() {
-		super.saveToModel();
-
-		int componentleft = (Integer.parseInt(textFieldTrayCountCols.getText())
-				* Integer.parseInt(textFieldTrayCountRows.getText())) - Integer.parseInt(textFieldFeedCount.getText());
-		lblComponentCount.setText("Components left: " + String.valueOf(componentleft));
-
-		if ((feeder.getOffsets().getX() == 0) && (feeder.getTrayCountCols() > 1)) {
-			MessageBoxes.errorBox(this, "Error",
-					"Column Offset  must be greater than 0 if Number of Tray Columns is greater than 1 or feed failure will occur.");
-		}
-		if ((feeder.getOffsets().getY() == 0) && (feeder.getTrayCountRows() > 1)) {
-			MessageBoxes.errorBox(this, "Error",
-					"Row Offset must be greater than 0 if Number of Tray Rows is greater than 1 or feed failure will occur.");
-		}
-	}
+	
+    public void setFeedCount(int feedCount) {
+        int componentleft = feeder.getTrayCountCols() * feeder.getTrayCountRows() - feedCount;
+        SwingUtilities.invokeLater(() -> {
+            lblComponentCount.setText("Components left: " + String.valueOf(componentleft));
+        });
+        
+        // TODO STOPSHIP these probably should be exception on the setters, I think?
+//        if ((feeder.getOffsets()
+//                   .getX() == 0)
+//                && (feeder.getTrayCountCols() > 1)) {
+//            MessageBoxes.errorBox(this, "Error",
+//                    "Column Offset  must be greater than 0 if Number of Tray Columns is greater than 1 or feed failure will occur.");
+//        }
+//        if ((feeder.getOffsets()
+//                   .getY() == 0)
+//                && (feeder.getTrayCountRows() > 1)) {
+//            MessageBoxes.errorBox(this, "Error",
+//                    "Row Offset must be greater than 0 if Number of Tray Rows is greater than 1 or feed failure will occur.");
+//        }
+    }
 
 	public static double round(double value, int places) {
 		if (places < 0) {

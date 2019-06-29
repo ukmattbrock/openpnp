@@ -377,6 +377,7 @@ public class OpenPnpCaptureCamera extends ReferenceCamera implements Runnable {
         else {
             this.uniqueId = device.getUniqueId();
         }
+        open();
         firePropertyChange("device", null, device);
     }
 
@@ -392,6 +393,7 @@ public class OpenPnpCaptureCamera extends ReferenceCamera implements Runnable {
         else {
             this.formatId = format.getFormatId();
         }
+        open();
         firePropertyChange("format", null, format);
     }
 

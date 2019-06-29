@@ -680,12 +680,6 @@ public class OpenPnpCaptureCameraConfigurationWizard extends AbstractConfigurati
         ComponentDecorators.decorateWithAutoSelect(value);
     }
 
-    @Override
-    protected void saveToModel() {
-        super.saveToModel();
-        camera.open();
-    }
-
     class BooleanInverter extends Converter<Boolean, Boolean> {
         @Override
         public Boolean convertForward(Boolean arg0) {

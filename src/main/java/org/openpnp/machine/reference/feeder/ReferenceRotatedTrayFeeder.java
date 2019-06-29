@@ -136,6 +136,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setTrayCountCols(int trayCountCols) {
 		this.trayCountCols = trayCountCols;
+        firePropertyChange("trayCountCols", null, trayCountCols);
 	}
 
 	public int getTrayCountRows() {
@@ -144,6 +145,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setTrayCountRows(int trayCountRows) {
 		this.trayCountRows = trayCountRows;
+        firePropertyChange("trayCountRows", null, trayCountRows);
 	}
 
 	public Location getLastComponentLocation() {
@@ -152,6 +154,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setLastComponentLocation(Location LastComponentLocation) {
 		this.lastComponentLocation = LastComponentLocation;
+        firePropertyChange("lastComponentLocation", null, lastComponentLocation);
 	}
 
 	public Location getFirstRowLastComponentLocation() {
@@ -160,6 +163,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setFirstRowLastComponentLocation(Location FirstRowLastComponentLocation) {
 		this.firstRowLastComponentLocation = FirstRowLastComponentLocation;
+        firePropertyChange("firstRowLastComponentLocation", null, firstRowLastComponentLocation);
 	}
 
 	public Location getOffsets() {
@@ -168,6 +172,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setOffsets(Location offsets) {
 		this.offsets = offsets;
+        firePropertyChange("offsets", null, offsets);
 	}
 
 	public double getTrayRotation() {
@@ -176,6 +181,7 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 
 	public void setTrayRotation(double trayrotation) {
 		this.trayRotation = trayrotation;
+        firePropertyChange("trayRotation", null, trayRotation);
 	}
 
 	public int getFeedCount() {
@@ -183,9 +189,9 @@ public class ReferenceRotatedTrayFeeder extends ReferenceFeeder {
 	}
 
 	public void setFeedCount(int feedCount) {
-		int oldValue = this.feedCount;
-		this.feedCount = feedCount;
-		firePropertyChange("feedCount", oldValue, feedCount);
+        int oldValue = this.feedCount;
+        this.feedCount = feedCount;
+        firePropertyChange("feedCount", oldValue, feedCount);
 	}
 
 	@Override

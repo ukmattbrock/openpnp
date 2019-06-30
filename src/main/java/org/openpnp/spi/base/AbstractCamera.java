@@ -126,6 +126,7 @@ public abstract class AbstractCamera extends AbstractModelObject implements Came
     @Override
     public void setUnitsPerPixel(Location unitsPerPixel) {
         this.unitsPerPixel = unitsPerPixel;
+        firePropertyChange("unitsPerPixel", null, unitsPerPixel);
     }
 
     @Override
@@ -237,6 +238,7 @@ public abstract class AbstractCamera extends AbstractModelObject implements Came
 
     public void setSettleTimeMs(long settleTimeMs) {
         this.settleTimeMs = settleTimeMs;
+        firePropertyChange("settleTimeMs", null, settleTimeMs);
     }
 
     @Override

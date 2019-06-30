@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -53,7 +52,6 @@ import com.jgoodies.forms.layout.RowSpec;
 
 public class GcodeDriverGcodes extends AbstractConfigurationWizard {
     private final GcodeDriver driver;
-    private HashMap<ChangeKey, String> changes = new HashMap<>();
     private boolean ignoreUpdates = false;
 
     public GcodeDriverGcodes(GcodeDriver driver) {
@@ -183,14 +181,10 @@ public class GcodeDriverGcodes extends AbstractConfigurationWizard {
             if (item == null || commandType == null) {
                 return;
             }
-            // First see if there is a pending change
-            String text = changes.get(new ChangeKey(getSelectedHeadMountable(), getSelectedCommandType()));
-            if (text == null) {
-                // If not, see if there is a command on the driver
-                Command c = driver.getCommand(item.getHeadMountable(), commandType, false);
-                if (c != null) {
-                    text = c.getCommand();
-                }
+            String text = null;
+            Command c = driver.getCommand(item.getHeadMountable(), commandType, false);
+            if (c != null) {
+                text = c.getCommand();
             }
             if (text == null) {
                 textAreaCommand.setText("");
@@ -209,29 +203,12 @@ public class GcodeDriverGcodes extends AbstractConfigurationWizard {
             return;
         }
         String text = textAreaCommand.getText();
-        changes.put(new ChangeKey(getSelectedHeadMountable(), getSelectedCommandType()), text);
-        notifyChange();
+        driver.setCommand(getSelectedHeadMountable(), getSelectedCommandType(), text);
     }
     
     @Override
-    protected void loadFromModel() {
-        super.loadFromModel();
-        changes.clear();
-        commandTypeChanged();
-    }
-
-    @Override
-    protected void saveToModel() {
-        super.saveToModel();
-        for (ChangeKey key : changes.keySet()) {
-            String text = changes.get(key);
-            driver.setCommand(key.hm, key.command, text);
-        }
-        changes.clear();
-    }
-
-    @Override
     public void createBindings() {
+        commandTypeChanged();
     }
 
     public final Action exportProfileAction = new AbstractAction() {
@@ -391,58 +368,6 @@ public class GcodeDriverGcodes extends AbstractConfigurationWizard {
                 type = "Actuator";
             }
             return String.format("%s: %s %s", type, hm.getHead() == null ? "[No Head]" : hm.getHead().getName(), hm.getName());
-        }
-    }
-    
-    class ChangeKey {
-        final public HeadMountable hm;
-        final public CommandType command;
-        
-        public ChangeKey(HeadMountable hm, CommandType command) {
-            this.hm = hm;
-            this.command = command;
-        }
-        
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((command == null) ? 0 : command.hashCode());
-            result = prime * result + ((hm == null) ? 0 : hm.hashCode());
-            return result;
-        }
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            ChangeKey other = (ChangeKey) obj;
-            if (!getOuterType().equals(other.getOuterType())) {
-                return false;
-            }
-            if (command != other.command) {
-                return false;
-            }
-            if (hm == null) {
-                if (other.hm != null) {
-                    return false;
-                }
-            }
-            else if (!hm.equals(other.hm)) {
-                return false;
-            }
-            return true;
-        }
-        
-        private GcodeDriverGcodes getOuterType() {
-            return GcodeDriverGcodes.this;
         }
     }
 }

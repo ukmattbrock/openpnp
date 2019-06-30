@@ -470,19 +470,18 @@ public class ReferenceRotatedTrayFeederConfigurationWizard extends AbstractConfi
             lblComponentCount.setText("Components left: " + String.valueOf(componentleft));
         });
         
-        // TODO STOPSHIP these probably should be exception on the setters, I think?
-//        if ((feeder.getOffsets()
-//                   .getX() == 0)
-//                && (feeder.getTrayCountCols() > 1)) {
-//            MessageBoxes.errorBox(this, "Error",
-//                    "Column Offset  must be greater than 0 if Number of Tray Columns is greater than 1 or feed failure will occur.");
-//        }
-//        if ((feeder.getOffsets()
-//                   .getY() == 0)
-//                && (feeder.getTrayCountRows() > 1)) {
-//            MessageBoxes.errorBox(this, "Error",
-//                    "Row Offset must be greater than 0 if Number of Tray Rows is greater than 1 or feed failure will occur.");
-//        }
+        if ((feeder.getOffsets()
+                   .getX() == 0)
+                && (feeder.getTrayCountCols() > 1)) {
+            MessageBoxes.errorBox(this, "Error",
+                    "Column Offset  must be greater than 0 if Number of Tray Columns is greater than 1 or feed failure will occur.");
+        }
+        if ((feeder.getOffsets()
+                   .getY() == 0)
+                && (feeder.getTrayCountRows() > 1)) {
+            MessageBoxes.errorBox(this, "Error",
+                    "Row Offset must be greater than 0 if Number of Tray Rows is greater than 1 or feed failure will occur.");
+        }
     }
 
 	public static double round(double value, int places) {

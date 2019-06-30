@@ -68,8 +68,10 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 
 import org.openpnp.Translations;
 import org.openpnp.gui.components.CameraPanel;
@@ -147,7 +149,7 @@ public class MainFrame extends JFrame {
     private JDialog frameMachineControls;
     private Map<KeyStroke, Action> hotkeyActionMap;
     
-    private UndoManager undoManager = new UndoManager();
+    private UndoManager undoManager;
 
     public static MainFrame get() {
         return mainFrame;
@@ -636,6 +638,8 @@ public class MainFrame extends JFrame {
         registerBoardImporters();
 
         addComponentListener(componentListener);
+        
+        undoManager = new ActionUpdateUndoManager(undoAction, redoAction);
         
         try {
             configuration.load();
@@ -1199,6 +1203,74 @@ public class MainFrame extends JFrame {
           MessageBoxes.infoBox("Notice", //$NON-NLS-1$
                   "Please restart OpenPnP for the changes to take effect."); //$NON-NLS-1$
       }
+    }
+    
+    private class ActionUpdateUndoManager extends UndoManager {
+        final Action undoAction;
+        final Action redoAction;
+        
+        public ActionUpdateUndoManager(Action undoAction, Action redoAction) {
+            this.undoAction = undoAction;
+            this.redoAction = redoAction;
+            updateActions();
+        }
+        
+        protected void updateActions() {
+            if (canUndo()) {
+                undoAction.setEnabled(true);
+                undoAction.putValue(Action.NAME, getUndoPresentationName());
+            }
+            else {
+                undoAction.setEnabled(false);
+                undoAction.putValue(Action.NAME, "Undo");
+            }
+            
+            if (canRedo()) {
+                redoAction.setEnabled(true);
+                redoAction.putValue(Action.NAME, getRedoPresentationName());
+            }
+            else {
+                redoAction.setEnabled(false);
+                redoAction.putValue(Action.NAME, "Redo");
+            }
+        }
+
+        @Override
+        public synchronized void discardAllEdits() {
+            super.discardAllEdits();
+            updateActions();
+        }
+
+        @Override
+        protected void trimForLimit() {
+            super.trimForLimit();
+            updateActions();
+        }
+
+        @Override
+        protected void trimEdits(int from, int to) {
+            super.trimEdits(from, to);
+            updateActions();
+        }
+
+        @Override
+        protected void undoTo(UndoableEdit edit) throws CannotUndoException {
+            super.undoTo(edit);
+            updateActions();
+        }
+
+        @Override
+        protected void redoTo(UndoableEdit edit) throws CannotRedoException {
+            super.redoTo(edit);
+            updateActions();
+        }
+
+        @Override
+        public synchronized boolean addEdit(UndoableEdit anEdit) {
+            boolean b = super.addEdit(anEdit);
+            updateActions();
+            return b;
+        }
     }
     
     private JPanel panelStatusAndDros;

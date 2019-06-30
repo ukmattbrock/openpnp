@@ -48,6 +48,7 @@ import org.openpnp.gui.support.IdentifiableListCellRenderer;
 import org.openpnp.gui.support.IdentifiableTableCellRenderer;
 import org.openpnp.gui.support.MessageBoxes;
 import org.openpnp.gui.support.PartsComboBoxModel;
+import org.openpnp.gui.support.PropertyEdit;
 import org.openpnp.gui.tablemodel.PlacementsTableModel;
 import org.openpnp.gui.tablemodel.PlacementsTableModel.Status;
 import org.openpnp.model.Board;
@@ -544,7 +545,8 @@ public class JobPlacementsPanel extends JPanel {
                 Camera camera = tool.getHead().getDefaultCamera();
                 Location placementLocation = Utils2D.calculateBoardPlacementLocationInverse(
                         boardLocation, camera.getLocation());
-                getSelection().setLocation(placementLocation);
+                Placement placement = getSelection();
+                MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Camera Location", placement, "location", placementLocation, true));
                 table.repaint();
             });
         }
@@ -563,7 +565,8 @@ public class JobPlacementsPanel extends JPanel {
             Nozzle nozzle = MainFrame.get().getMachineControls().getSelectedNozzle();
             Location placementLocation = Utils2D
                     .calculateBoardPlacementLocationInverse(boardLocation, nozzle.getLocation());
-            getSelection().setLocation(placementLocation);
+            Placement placement = getSelection();
+            MainFrame.get().getUndoManager().addEdit(new PropertyEdit("Capture Tool Location", placement, "location", placementLocation, true));
             table.repaint();
         }
     };

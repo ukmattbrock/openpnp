@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.openpnp.gui.components.ComponentDecorators;
@@ -153,11 +154,13 @@ public class ReferenceTrayFeederConfigurationWizard
         ComponentDecorators.decorateWithAutoSelect(textFieldTrayCountX);
         ComponentDecorators.decorateWithAutoSelect(textFieldTrayCountY);
         ComponentDecorators.decorateWithAutoSelect(textFieldFeedCount);
+        
+        bind(UpdateStrategy.READ, feeder, "feedCount", this, "feedCount");
+        bind(UpdateStrategy.READ, feeder, "trayCountCols", this, "feedCount");
+        bind(UpdateStrategy.READ, feeder, "trayCountRows", this, "feedCount");
     }
 
-    @Override
-    protected void saveToModel() {
-        super.saveToModel();
+    public void setFeedCount(int feedCount) {
         if (feeder.getOffsets().getX() == 0 && feeder.getTrayCountX() > 1) {
             MessageBoxes.errorBox(this, "Error",
                     "X offset must be greater than 0 if X tray count is greater than 1 or feed failure will occur.");

@@ -99,6 +99,7 @@ public class ReferenceTrayFeeder extends ReferenceFeeder {
 
     public void setTrayCountX(int trayCountX) {
         this.trayCountX = trayCountX;
+        firePropertyChange("trayCountX", null, trayCountX);
     }
 
     public int getTrayCountY() {
@@ -107,6 +108,7 @@ public class ReferenceTrayFeeder extends ReferenceFeeder {
 
     public void setTrayCountY(int trayCountY) {
         this.trayCountY = trayCountY;
+        firePropertyChange("trayCountY", null, trayCountY);
     }
 
     public Location getOffsets() {
@@ -115,6 +117,7 @@ public class ReferenceTrayFeeder extends ReferenceFeeder {
 
     public void setOffsets(Location offsets) {
         this.offsets = offsets;
+        firePropertyChange("offsets", null, offsets);
     }
 
     public int getFeedCount() {

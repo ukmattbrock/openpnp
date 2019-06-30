@@ -5,6 +5,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.openpnp.util.BeanUtils;
 
 public class PropertyEdit extends AbstractUndoableEdit {
     private static final long serialVersionUID = 1L;
@@ -20,7 +21,7 @@ public class PropertyEdit extends AbstractUndoableEdit {
             this.presentationName = presentationName;
         }
         else {
-            this.presentationName = "";
+            this.presentationName = "Set " + BeanUtils.getPropertyDisplayName(property);
         }
         this.target = target;
         this.property = property;
@@ -50,6 +51,11 @@ public class PropertyEdit extends AbstractUndoableEdit {
     }
 
     @Override
+    public String getPresentationName() {
+        return presentationName;
+    }
+
+    @Override
     public void undo() {
         super.undo();
         try {
@@ -67,6 +73,7 @@ public class PropertyEdit extends AbstractUndoableEdit {
             PropertyUtils.setProperty(target, property, newValue);
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new CannotRedoException();
         }
     }

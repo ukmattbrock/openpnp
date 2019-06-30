@@ -432,10 +432,6 @@ public class ReferenceSlotAutoFeederConfigurationWizard
         
         ComponentDecorators.decorateWithAutoSelect(retryCountTf);
         ComponentDecorators.decorateWithAutoSelect(pickRetryCount);
-        
-        feederPartCb.addActionListener(e -> {
-            notifyChange();
-        });
     }
     
     private Action newFeederAction = new AbstractAction("New") {

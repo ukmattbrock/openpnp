@@ -21,13 +21,12 @@ package org.openpnp.gui.support;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.jdesktop.beansbinding.AbstractBindingListener;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -58,13 +57,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
     }
 
     public abstract void createBindings();
-
-    /**
-     * When overriding this method you should call super.loadFromModel() AFTER doing any work that
-     * you need to do, not before.
-     */
-    protected void loadFromModel() {
-    }
 
     public AutoBinding bindUndoable(Object source, String sourceProperty,
             Object target, String targetProperty, Converter converter) {
@@ -98,7 +90,6 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         scrollPane.getVerticalScrollBar()
                 .setUnitIncrement(Configuration.get().getVerticalScrollUnitIncrement());
         createBindings();
-        loadFromModel();
     }
 
     @Override
@@ -122,7 +113,17 @@ public abstract class AbstractConfigurationWizard extends JPanel implements Wiza
         
         @Override
         public void targetChanged(Binding binding, PropertyStateEvent event) {
-            MainFrame.get().getUndoManager().addEdit(new PropertyEdit(source, sourceProperty, event.getNewValue()));
+            try {
+                Object newValue = event.getNewValue();
+                Converter converter = binding.getConverter();
+                if (converter != null) {
+                    newValue = converter.convertReverse(newValue);
+                }
+                MainFrame.get().getUndoManager().addEdit(new PropertyEdit(source, sourceProperty, newValue));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     

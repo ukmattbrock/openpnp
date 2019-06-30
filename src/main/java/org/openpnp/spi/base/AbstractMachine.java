@@ -390,11 +390,13 @@ public abstract class AbstractMachine extends AbstractModelObject implements Mac
 
     public void setDiscardLocation(Location discardLocation) {
         this.discardLocation = discardLocation;
+        firePropertyChange("discardLocation", null, discardLocation);
     }
 
     @Override
     public void setSpeed(double speed) {
         this.speed = speed;
+        firePropertyChange("speed", null, speed);
     }
 
     @Override

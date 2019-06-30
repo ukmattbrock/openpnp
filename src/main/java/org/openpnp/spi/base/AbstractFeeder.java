@@ -69,6 +69,8 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
     public void setPart(Part part) {
         this.part = part;
         this.partId = part.getId();
+        firePropertyChange("part", null, part);
+        firePropertyChange("partId", null, partId);
     }
 
     @Override
@@ -84,6 +86,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
     @Override
     public void setName(String name) {
         this.name = name;
+        firePropertyChange("name", null, name);
     }
 
     @Override
@@ -97,6 +100,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
 
     public void setFeedRetryCount(int retryCount) {
         this.retryCount = retryCount;
+        firePropertyChange("feedRetryCount", null, retryCount);
     }
     
     public int getPickRetryCount() {
@@ -105,6 +109,7 @@ public abstract class AbstractFeeder extends AbstractModelObject implements Feed
 
     public void setPickRetryCount(int pickRetryCount) {
         this.pickRetryCount = pickRetryCount;
+        firePropertyChange("pickRetryCount", null, pickRetryCount);
     }
 
     @Override

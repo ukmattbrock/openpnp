@@ -1,5 +1,6 @@
 package org.openpnp.util;
 
+import java.beans.Introspector;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 
@@ -46,5 +47,60 @@ public class BeanUtils {
         }
         binding.bind();
         return binding;
+    }
+    
+    /**
+     * Convert a Java Beans style property name such as "myGoodPropery" to a human readable display
+     * name such as "My Good Property". Runs of capital letters are maintained so that properties
+     * such as "sourceURI" display as "Source URI". Periods are treated as if concatenating multiple
+     * properties together with a space. Note that periods cause this to be one way conversion. There
+     * is no analog for converting back from a display name where the property contained a period.
+     * @param propertyName
+     * @return
+     */
+    public static String getPropertyDisplayName(String propertyName) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < propertyName.length(); i++) {
+                char ch = propertyName.charAt(i);
+                if (Character.isUpperCase(ch) && i > 0 && Character.isLowerCase(propertyName.charAt(i - 1))) {
+                    sb.append(' ');
+                }
+                if (ch == '.') {
+                    sb.append(' ');
+                    continue;
+                }
+                if (i == 0 || propertyName.charAt(i - 1) == '.') {
+                    ch = Character.toUpperCase(ch);
+                }
+                sb.append(ch);
+            }
+            return sb.toString();
+        }
+        catch (Exception e) {
+            return propertyName;
+        }
+    }
+    
+    public static void test(String propertyName) {
+        String dn = getPropertyDisplayName(propertyName);
+        String dc = Introspector.decapitalize(dn.replaceAll(" ", ""));
+        System.out.println(String.format("[%s] %20s %20s %20s",
+                propertyName.equals(dc) ? "X" : " ",
+                propertyName,
+                dn, 
+                dc));
+    }
+    
+    public static void main(String[] args) {
+        test("feedCount");
+        test("sourceURI");
+        test("sourceUri");
+        test("part");
+        test("partId");
+        test("partID");
+        test("uri");
+        test("URI");
+        test("exposure.value");
     }
 }

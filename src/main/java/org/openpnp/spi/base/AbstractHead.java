@@ -242,6 +242,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     public void setParkLocation(Location parkLocation) {
         this.parkLocation = parkLocation;
+        firePropertyChange("parkLocation", null, parkLocation);
     }
 
     public boolean isCarryingPart() {
@@ -271,6 +272,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     public void setMinLocation(Location minLocation) {
         this.minLocation = minLocation;
+        firePropertyChange("minLocation", null, minLocation);
     }
 
     public Location getMaxLocation() {
@@ -279,6 +281,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     public void setMaxLocation(Location maxLocation) {
         this.maxLocation = maxLocation;
+        firePropertyChange("maxLocation", null, maxLocation);
     }
 
     public boolean isSoftLimitsEnabled() {
@@ -287,6 +290,7 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     public void setSoftLimitsEnabled(boolean softLimitsEnabled) {
         this.softLimitsEnabled = softLimitsEnabled;
+        firePropertyChange("softLimitsEnabled", null, softLimitsEnabled);
     }
     
     @Override
@@ -300,5 +304,6 @@ public abstract class AbstractHead extends AbstractModelObject implements Head {
 
     public void setzProbeActuatorName(String zProbeActuatorName) {
         this.zProbeActuatorName = zProbeActuatorName;
+        firePropertyChange("zProbeActuatorName", null, zProbeActuatorName);
     }
 }

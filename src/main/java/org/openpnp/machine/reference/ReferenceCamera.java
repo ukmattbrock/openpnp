@@ -228,6 +228,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setHeadOffsets(Location headOffsets) {
         this.headOffsets = headOffsets;
         viewHasChanged();
+        firePropertyChange("headOffsets", null, headOffsets);
     }
 
     @Override
@@ -265,6 +266,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setRotation(double rotation) {
         this.rotation = rotation;
         viewHasChanged();
+        firePropertyChange("rotation", null, rotation);
     }
 
     public boolean isFlipX() {
@@ -274,6 +276,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setFlipX(boolean flipX) {
         this.flipX = flipX;
         viewHasChanged();
+        firePropertyChange("flipX", null, flipX);
     }
 
     public boolean isFlipY() {
@@ -283,6 +286,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setFlipY(boolean flipY) {
         this.flipY = flipY;
         viewHasChanged();
+        firePropertyChange("flipY", null, flipY);
     }
 
     public int getOffsetX() {
@@ -292,6 +296,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setOffsetX(int offsetX) {
         this.offsetX = offsetX;
         viewHasChanged();
+        firePropertyChange("offsetX", null, offsetX);
     }
 
     public int getOffsetY() {
@@ -301,6 +306,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setOffsetY(int offsetY) {
         this.offsetY = offsetY;
         viewHasChanged();
+        firePropertyChange("offsetY", null, offsetY);
     }
 
     public int getCropWidth() {
@@ -310,6 +316,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setCropWidth(int cropWidth) {
         this.cropWidth = cropWidth;
         viewHasChanged();
+        firePropertyChange("cropWidth", null, cropWidth);
     }
 
     public int getCropHeight() {
@@ -319,6 +326,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setCropHeight(int cropHeight) {
         this.cropHeight = cropHeight;
         viewHasChanged();
+        firePropertyChange("cropHeight", null, cropHeight);
     }
 
     public int getScaleWidth() {
@@ -328,6 +336,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setScaleWidth(int scaleWidth) {
         this.scaleWidth = scaleWidth;
         viewHasChanged();
+        firePropertyChange("scaleWidth", null, scaleWidth);
     }
 
     public int getScaleHeight() {
@@ -337,6 +346,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
     public void setScaleHeight(int scaleHeight) {
         this.scaleHeight = scaleHeight;
         viewHasChanged();
+        firePropertyChange("scaleHeight", null, scaleHeight);
     }
     
     public boolean isDeinterlace() {
@@ -345,6 +355,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
 
     public void setDeinterlace(boolean deinterlace) {
         this.deinterlace = deinterlace;
+        firePropertyChange("deinterlace", null, deinterlace);
     }
 
     // TODO Optimization: We could skip the convert to and from Mat if no transforms are needed.
@@ -585,6 +596,7 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
 
     public void setSafeZ(Length safeZ) {
         this.safeZ = safeZ;
+        firePropertyChange("safeZ", null, safeZ);
     }
 
     @Override

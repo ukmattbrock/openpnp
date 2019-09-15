@@ -20,6 +20,11 @@
 package org.openpnp.machine.reference.camera.wizards;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -177,31 +182,28 @@ public class OnvifIPCameraConfigurationWizard extends AbstractConfigurationWizar
         bindUndoable(camera, "fps", fpsTextField, "text", intConverter);
         bindUndoable(camera, "username", usernameTextField, "text");
         bindUndoable(camera, "password", passwordTextField, "text");
-        // Should always be last so that it doesn't trigger multiple camera reloads.
         bindUndoable(camera, "hostIP", ipTextField, "text");
 
         ComponentDecorators.decorateWithAutoSelect(fpsTextField);
         ComponentDecorators.decorateWithAutoSelect(ipTextField);
         ComponentDecorators.decorateWithAutoSelect(usernameTextField);
         ComponentDecorators.decorateWithAutoSelect(passwordTextField);
-    }
-
-    @Override
-    protected void loadFromModel() {
-        refreshResolutionList();
-        super.loadFromModel();
-    }
-
-    @Override
-    protected void saveToModel() {
-        super.saveToModel();
-        if (camera.isDirty()) {
-            camera.setHostIP(camera.getHostIP());
-        }
         
-        refreshResolutionList();
+        ipTextField.addActionListener(reconnectActionListener);
+        usernameTextField.addActionListener(reconnectActionListener);
+        passwordTextField.addActionListener(reconnectActionListener);
     }
-
+    
+    private ActionListener reconnectActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (camera.isDirty()) {
+                camera.connect();
+                refreshResolutionList();
+            }
+        }
+    };
+    
     private JLabel lblIP;
     private JTextField ipTextField;
     private JLabel lblUsername;

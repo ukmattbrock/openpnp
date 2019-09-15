@@ -83,7 +83,7 @@ public class OnvifIPCamera extends ReferenceCamera implements Runnable {
     @Override
     public BufferedImage internalCapture() {
         if (thread == null) {
-            initCamera();
+            connect();
         }
         try {
             if (snapshotURI == null) {
@@ -124,7 +124,7 @@ public class OnvifIPCamera extends ReferenceCamera implements Runnable {
     @Override
     public synchronized void startContinuousCapture(CameraListener listener) {
         if (thread == null) {
-            initCamera();
+            connect();
         }
         super.startContinuousCapture(listener);
     }
@@ -163,7 +163,7 @@ public class OnvifIPCamera extends ReferenceCamera implements Runnable {
         throw new Exception("No JPEG profiles available for camera at " + hostIP);
     }
 
-    private void initCamera() {
+    public void connect() {
         if (thread != null) {
             thread.interrupt();
             try {
@@ -300,7 +300,7 @@ public class OnvifIPCamera extends ReferenceCamera implements Runnable {
 
     public List<VideoResolution> getSupportedResolutions() {
         if (thread == null) {
-            initCamera();
+            connect();
         }
         if (nvt == null) {
             return null;
@@ -343,8 +343,6 @@ public class OnvifIPCamera extends ReferenceCamera implements Runnable {
     public synchronized void setHostIP(String hostIP) {
         this.hostIP = hostIP;
         setDirty(true);
-
-        initCamera();
     }
 
     public String getUsername() {

@@ -21,8 +21,7 @@ package org.openpnp.machine.reference.camera.wizards;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,10 +58,7 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
 
     private JPanel panelGeneral;
     
-    private List<OpenCvCapturePropertyValue> properties = new ArrayList<>();
-    
     private boolean propertyChanging = false;
-    private boolean dirty = false;
 
     public OpenCvCameraConfigurationWizard(OpenCvCamera camera) {
         this.camera = camera;
@@ -193,33 +189,32 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
             if (propertyChanging) {
                 return;
             }
-            OpenCvCapturePropertyValue pv = getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
+            OpenCvCapturePropertyValue pv = camera.getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
             if (pv == null) {
                 return;
             }
             pv.setBeforeOpen = setBeforeOpenCk.isSelected();
-            notifyChange();
         });
         setAfterOpenCk.addChangeListener(e -> {
             if (propertyChanging) {
                 return;
             }
-            OpenCvCapturePropertyValue pv = getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
+            OpenCvCapturePropertyValue pv = camera.getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
             if (pv == null) {
                 return;
             }
             pv.setAfterOpen = setAfterOpenCk.isSelected();
-            notifyChange();
         });
         
-        // preload the properties
-        properties = new ArrayList<>(camera.getProperties());
         propertyChanged();
     }
 
+    // TODO STOPSHIP seems to be mostly working but maybe the device index isn't working right?
+    // Seems to load different cameras sometimes when I switch betwee 0 and 1.
+    
     private void propertyChanged() {
         propertyChanging = true;
-        OpenCvCapturePropertyValue pv = getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem()); 
+        OpenCvCapturePropertyValue pv = camera.getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem()); 
         propertyValueTf.setText(pv == null ? "" : "" + pv.value);
         setBeforeOpenCk.setSelected(pv == null ? false : pv.setBeforeOpen);
         setAfterOpenCk.setSelected(pv == null ? false : pv.setAfterOpen);
@@ -235,48 +230,13 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
         catch (Exception e) {
             
         }
-        setPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem(), value);
-        OpenCvCapturePropertyValue pv = getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
+        camera.setPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem(), value);
+        OpenCvCapturePropertyValue pv = camera.getPropertyValue((OpenCvCaptureProperty) propertyCb.getSelectedItem());
         if (pv == null) {
             return;
         }
         pv.setBeforeOpen = setBeforeOpenCk.isSelected();
         pv.setAfterOpen = setAfterOpenCk.isSelected();
-    }
-    
-    private OpenCvCapturePropertyValue getPropertyValue(OpenCvCaptureProperty property) {
-        for (OpenCvCapturePropertyValue pv : properties) {
-            if (pv.property == property) {
-                return pv;
-            }
-        }
-        return null;
-    }
-
-    private void setPropertyValue(OpenCvCaptureProperty property, Double value) {
-        OpenCvCapturePropertyValue pv = null;
-        for (OpenCvCapturePropertyValue pv_ : properties) {
-            if (pv_.property == property) {
-                pv = pv_;
-            }
-        }
-        // If the value is null, remove the property.
-        if (value == null && pv != null) {
-            properties.remove(pv);
-            dirty = true;
-            notifyChange();
-            return;
-        }
-        // Otherwise, if the property doesn't exist then create it.
-        if (pv == null) {
-            pv = new OpenCvCapturePropertyValue();
-            pv.property = property;
-            properties.add(pv);
-        }
-        // And set the value.
-        pv.value = value;
-        dirty = true;
-        notifyChange();
     }
     
     @Override
@@ -286,32 +246,16 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
         bindUndoable(camera, "preferredHeight", textFieldPreferredHeight, "text",
                 intConverter);
         bindUndoable(camera, "fps", fpsTextField, "text", intConverter);
-        // Should always be last so that it doesn't trigger multiple camera reloads.
         bindUndoable(camera, "deviceIndex", comboBoxDeviceIndex, "selectedItem");
 
         ComponentDecorators.decorateWithAutoSelect(textFieldPreferredWidth);
         ComponentDecorators.decorateWithAutoSelect(textFieldPreferredHeight);
         ComponentDecorators.decorateWithAutoSelect(fpsTextField);
         ComponentDecorators.decorateWithAutoSelect(propertyValueTf);
-    }
-    
-    @Override
-    protected void loadFromModel() {
-        this.properties = new ArrayList<>(camera.getProperties());
-        propertyChanged();
-        dirty = false;
-        super.loadFromModel();
-    }
-
-    @Override
-    protected void saveToModel() {
-        super.saveToModel();
-        camera.getProperties().clear();
-        camera.getProperties().addAll(this.properties);
-        if (camera.isDirty() || dirty) {
-            camera.setDeviceIndex(camera.getDeviceIndex());
-            dirty = false;
-        }
+        
+        comboBoxDeviceIndex.addActionListener(reconnectActionListener);
+        textFieldPreferredWidth.addActionListener(reconnectActionListener);
+        textFieldPreferredHeight.addActionListener(reconnectActionListener);
     }
     
     public Action readPropertyValueAction = new AbstractAction() {
@@ -327,7 +271,12 @@ public class OpenCvCameraConfigurationWizard extends AbstractConfigurationWizard
         }
     };
 
-
+    private ActionListener reconnectActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            camera.connect();
+        }
+    };
 
     private JComboBox comboBoxDeviceIndex;
     private JLabel lblPreferredWidth;

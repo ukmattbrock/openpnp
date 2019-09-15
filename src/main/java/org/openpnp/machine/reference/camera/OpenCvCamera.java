@@ -30,6 +30,8 @@ import org.opencv.videoio.Videoio;
 import org.openpnp.CameraListener;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.ReferenceCamera;
+import org.openpnp.machine.reference.camera.OpenCvCamera.OpenCvCaptureProperty;
+import org.openpnp.machine.reference.camera.OpenCvCamera.OpenCvCapturePropertyValue;
 import org.openpnp.machine.reference.camera.wizards.OpenCvCameraConfigurationWizard;
 import org.openpnp.spi.PropertySheetHolder;
 import org.openpnp.util.OpenCvUtils;
@@ -61,14 +63,13 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
 
     private VideoCapture fg = new VideoCapture();
     private Thread thread;
-    private boolean dirty = false;
 
     public OpenCvCamera() {}
 
     @Override
     public synchronized BufferedImage internalCapture() {
         if (thread == null) {
-            initCamera();
+            connect();
         }
         Mat mat = new Mat();
         try {
@@ -88,7 +89,7 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
     @Override
     public synchronized void startContinuousCapture(CameraListener listener) {
         if (thread == null) {
-            initCamera();
+            connect();
         }
         super.startContinuousCapture(listener);
     }
@@ -110,7 +111,7 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
         }
     }
 
-    private void initCamera() {
+    public void connect() {
         if (thread != null) {
             thread.interrupt();
             try {
@@ -122,7 +123,6 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
             thread = null;
         }
         try {
-            setDirty(false);
             width = null;
             height = null;
 
@@ -212,8 +212,6 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
 
     public synchronized void setDeviceIndex(int deviceIndex) {
         this.deviceIndex = deviceIndex;
-
-        initCamera();
     }
 
     public int getPreferredWidth() {
@@ -222,7 +220,6 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
 
     public void setPreferredWidth(int preferredWidth) {
         this.preferredWidth = preferredWidth;
-        setDirty(true);
     }
 
     public int getPreferredHeight() {
@@ -231,7 +228,6 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
 
     public void setPreferredHeight(int preferredHeight) {
         this.preferredHeight = preferredHeight;
-        setDirty(true);
     }
 
     public int getFps() {
@@ -240,14 +236,6 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
 
     public void setFps(int fps) {
         this.fps = fps;
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
     }
 
     @Override
@@ -268,6 +256,44 @@ public class OpenCvCamera extends ReferenceCamera implements Runnable {
     public List<OpenCvCapturePropertyValue> getProperties() {
         return properties;
     }
+    
+    public OpenCvCapturePropertyValue getPropertyValue(OpenCvCaptureProperty property) {
+        for (OpenCvCapturePropertyValue pv : getProperties()) {
+            if (pv.property == property) {
+                return pv;
+            }
+        }
+        return null;
+    }
+
+    public  void setPropertyValue(OpenCvCaptureProperty property, Double value) {
+        OpenCvCapturePropertyValue pv = null;
+        for (OpenCvCapturePropertyValue pv_ : getProperties()) {
+            if (pv_.property == property) {
+                pv = pv_;
+            }
+        }
+        // If the value is null, remove the property.
+        if (value == null && pv != null) {
+            getProperties().remove(pv);
+            return;
+        }
+        // Otherwise, if the property doesn't exist then create it.
+        if (pv == null) {
+            pv = new OpenCvCapturePropertyValue();
+            pv.property = property;
+            getProperties().add(pv);
+        }
+        // And set the value.
+        pv.value = value;
+        try {
+            fg.set(property.openCvPropertyId, value);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     public enum OpenCvCaptureProperty {
         CAP_PROP_POS_MSEC(0), // !< Current position of the video file in milliseconds.

@@ -33,6 +33,17 @@ public class BeanUtils {
         }
     }
     
+    public static boolean removePropertyChangeListener(Object obj, PropertyChangeListener listener) {
+        try {
+            Method method = obj.getClass().getMethod("removePropertyChangeListener", PropertyChangeListener.class);
+            method.invoke(obj, listener);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+    
     public static AutoBinding bind(UpdateStrategy updateStrategy, Object source, String sourceProperty,
             Object target, String targetProperty) {
         return bind(updateStrategy, source, sourceProperty, target, targetProperty, null);

@@ -43,5 +43,11 @@ public interface Actuator
      */
     public void actuate(double value) throws Exception;
     
+    public double getDoubleValueMinimum();
+    
+    public double getDoubleValueMaximum();
+    
+    public double getDoubleValueStep();
+    
     public String read() throws Exception;
 }

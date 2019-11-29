@@ -31,6 +31,7 @@ import javax.swing.border.TitledBorder;
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
+import org.openpnp.gui.support.DoubleConverter;
 import org.openpnp.gui.support.IntegerConverter;
 import org.openpnp.gui.support.LengthConverter;
 import org.openpnp.gui.support.MutableLocationProxy;
@@ -59,9 +60,25 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
     private JPanel panelProperties;
     private JLabel lblName;
     private JTextField nameTf;
+    private JPanel panelExtents;
+    private JLabel lblNewLabel;
+    private JLabel lbl5;
+    private JLabel lbl6;
+    private JTextField valueMinimum;
+    private JTextField valueMaximum;
+    private JTextField valueStep;
+    private JLabel lblNewLabel_1;
+    private JLabel lblNewLabel_2;
+    private JLabel lblNewLabel_3;
 
     public ReferenceActuatorConfigurationWizard(ReferenceActuator actuator) {
         this.actuator = actuator;
+        createUi();
+        if (actuator.getHead() == null) {
+            headMountablePanel.setVisible(false);
+        }
+    }
+    private void createUi() {
         
         panelProperties = new JPanel();
         panelProperties.setBorder(new TitledBorder(null, "Properties", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -81,12 +98,12 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
         nameTf = new JTextField();
         panelProperties.add(nameTf, "4, 2, fill, default");
         nameTf.setColumns(20);
-
-        headMountablePanel = new JPanel();
+        
+                headMountablePanel = new JPanel();
         headMountablePanel.setLayout(new BoxLayout(headMountablePanel, BoxLayout.Y_AXIS));
         contentPanel.add(headMountablePanel);
-
-        panelOffsets = new JPanel();
+        
+                panelOffsets = new JPanel();
         headMountablePanel.add(panelOffsets);
         panelOffsets.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
                 "Offsets", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
@@ -97,29 +114,29 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
                         FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,},
                 new RowSpec[] {FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
                         FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
-
-        JLabel lblX = new JLabel("X");
+        
+                JLabel lblX = new JLabel("X");
         panelOffsets.add(lblX, "2, 2");
-
-        JLabel lblY = new JLabel("Y");
+        
+                JLabel lblY = new JLabel("Y");
         panelOffsets.add(lblY, "4, 2");
-
-        JLabel lblZ = new JLabel("Z");
+        
+                JLabel lblZ = new JLabel("Z");
         panelOffsets.add(lblZ, "6, 2");
-
-        locationX = new JTextField();
+        
+                locationX = new JTextField();
         panelOffsets.add(locationX, "2, 4");
         locationX.setColumns(5);
-
-        locationY = new JTextField();
+        
+                locationY = new JTextField();
         panelOffsets.add(locationY, "4, 4");
         locationY.setColumns(5);
-
-        locationZ = new JTextField();
+        
+                locationZ = new JTextField();
         panelOffsets.add(locationZ, "6, 4");
         locationZ.setColumns(5);
-
-        panelSafeZ = new JPanel();
+        
+                panelSafeZ = new JPanel();
         headMountablePanel.add(panelSafeZ);
         panelSafeZ.setBorder(new TitledBorder(null, "Safe Z", TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
@@ -127,11 +144,11 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
                 new ColumnSpec[] {FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
                         FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,},
                 new RowSpec[] {FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
-
-        lblSafeZ = new JLabel("Safe Z");
+        
+                lblSafeZ = new JLabel("Safe Z");
         panelSafeZ.add(lblSafeZ, "2, 2, right, default");
-
-        textFieldSafeZ = new JTextField();
+        
+                textFieldSafeZ = new JTextField();
         panelSafeZ.add(textFieldSafeZ, "4, 2, fill, default");
         textFieldSafeZ.setColumns(10);
         
@@ -153,15 +170,61 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
         indexTextField = new JTextField();
         generalPanel.add(indexTextField, "4, 2, fill, default");
         indexTextField.setColumns(10);
-        if (actuator.getHead() == null) {
-            headMountablePanel.setVisible(false);
-        }
+        
+        panelExtents = new JPanel();
+        panelExtents.setBorder(new TitledBorder(null, "Value Extents", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        contentPanel.add(panelExtents);
+        panelExtents.setLayout(new FormLayout(new ColumnSpec[] {
+                FormSpecs.RELATED_GAP_COLSPEC,
+                FormSpecs.DEFAULT_COLSPEC,
+                FormSpecs.RELATED_GAP_COLSPEC,
+                FormSpecs.DEFAULT_COLSPEC,
+                FormSpecs.RELATED_GAP_COLSPEC,
+                FormSpecs.DEFAULT_COLSPEC,},
+            new RowSpec[] {
+                FormSpecs.RELATED_GAP_ROWSPEC,
+                FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.RELATED_GAP_ROWSPEC,
+                FormSpecs.DEFAULT_ROWSPEC,
+                FormSpecs.RELATED_GAP_ROWSPEC,
+                FormSpecs.DEFAULT_ROWSPEC,}));
+        
+        lblNewLabel = new JLabel("Value Minimum");
+        panelExtents.add(lblNewLabel, "2, 2, right, default");
+        
+        valueMinimum = new JTextField();
+        panelExtents.add(valueMinimum, "4, 2");
+        valueMinimum.setColumns(10);
+        
+        lblNewLabel_1 = new JLabel("Minimum value allowed when choosing a value.");
+        panelExtents.add(lblNewLabel_1, "6, 2");
+        
+        lbl5 = new JLabel("Value Maximum");
+        panelExtents.add(lbl5, "2, 4, right, default");
+        
+        valueMaximum = new JTextField();
+        panelExtents.add(valueMaximum, "4, 4");
+        valueMaximum.setColumns(10);
+        
+        lblNewLabel_2 = new JLabel("Maximum value allowed when choosing a value.");
+        panelExtents.add(lblNewLabel_2, "6, 4");
+        
+        lbl6 = new JLabel("Value Step");
+        panelExtents.add(lbl6, "2, 6, right, default");
+        
+        valueStep = new JTextField();
+        panelExtents.add(valueStep, "4, 6");
+        valueStep.setColumns(10);
+        
+        lblNewLabel_3 = new JLabel("Stepping value used when displaying a slider.");
+        panelExtents.add(lblNewLabel_3, "6, 6");
     }
 
     @Override
     public void createBindings() {
         LengthConverter lengthConverter = new LengthConverter();
         IntegerConverter intConverter = new IntegerConverter();
+        DoubleConverter doubleConverter = new DoubleConverter("%f");
 
         addWrappedBinding(actuator, "name", nameTf, "text");
         MutableLocationProxy headOffsets = new MutableLocationProxy();
@@ -171,6 +234,9 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
         addWrappedBinding(headOffsets, "lengthZ", locationZ, "text", lengthConverter);
         addWrappedBinding(actuator, "safeZ", textFieldSafeZ, "text", lengthConverter);
         addWrappedBinding(actuator, "index", indexTextField, "text", intConverter);
+        addWrappedBinding(actuator, "doubleValueMinimum", valueMinimum, "text", doubleConverter);
+        addWrappedBinding(actuator, "doubleValueMaximum", valueMaximum, "text", doubleConverter);
+        addWrappedBinding(actuator, "doubleValueStep", valueStep, "text", doubleConverter);
 
         ComponentDecorators.decorateWithAutoSelect(nameTf);
         ComponentDecorators.decorateWithAutoSelect(indexTextField);
@@ -178,5 +244,8 @@ public class ReferenceActuatorConfigurationWizard extends AbstractConfigurationW
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(locationY);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(locationZ);
         ComponentDecorators.decorateWithAutoSelectAndLengthConversion(textFieldSafeZ);
+        ComponentDecorators.decorateWithAutoSelect(valueMinimum);
+        ComponentDecorators.decorateWithAutoSelect(valueMaximum);
+        ComponentDecorators.decorateWithAutoSelect(valueStep);
     }
 }

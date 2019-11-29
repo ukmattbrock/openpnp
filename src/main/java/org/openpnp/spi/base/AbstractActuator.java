@@ -18,6 +18,15 @@ public abstract class AbstractActuator extends AbstractModelObject implements Ac
     protected String name;
 
     protected Head head;
+    
+    @Attribute(required = false)
+    protected double doubleValueMinimum = 0;
+    
+    @Attribute(required = false)
+    protected double doubleValueMaximum = 1;
+    
+    @Attribute(required = false)
+    protected double doubleValueStep = 0.1;
 
     public AbstractActuator() {
         this.id = Configuration.createId("ACT");
@@ -73,5 +82,32 @@ public abstract class AbstractActuator extends AbstractModelObject implements Ac
     @Override
     public String read() throws Exception {
         return null;
+    }
+
+    @Override
+    public double getDoubleValueMinimum() {
+        return doubleValueMinimum;
+    }
+
+    public void setDoubleValueMinimum(double doubleValueMinimum) {
+        this.doubleValueMinimum = doubleValueMinimum;
+    }
+
+    @Override
+    public double getDoubleValueMaximum() {
+        return doubleValueMaximum;
+    }
+
+    public void setDoubleValueMaximum(double doubleValueMaximum) {
+        this.doubleValueMaximum = doubleValueMaximum;
+    }
+
+    @Override
+    public double getDoubleValueStep() {
+        return doubleValueStep;
+    }
+
+    public void setDoubleValueStep(double doubleValueStep) {
+        this.doubleValueStep = doubleValueStep;
     }
 }

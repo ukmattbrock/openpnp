@@ -195,6 +195,16 @@
         	<artifactId>jaxws-api</artifactId>
         	<version>2.3.0</version>
     	</dependency>
+		<dependency>
+		    <groupId>org.boofcv</groupId>
+		    <artifactId>boofcv-core</artifactId>
+		    <version>0.34</version>
+		</dependency>    	
+		<dependency>
+		    <groupId>org.boofcv</groupId>
+		    <artifactId>boofcv-calibration</artifactId>
+		    <version>0.34</version>
+		</dependency>    	
    	</dependencies>
 	<build>
 		<plugins>

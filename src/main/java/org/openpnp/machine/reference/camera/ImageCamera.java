@@ -123,7 +123,7 @@ public class ImageCamera extends ReferenceCamera implements Runnable {
         /*
          * Create a buffer that we will render the center tile and it's surrounding tiles to.
          */
-        BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 
         Graphics gFrame = frame.getGraphics();
 

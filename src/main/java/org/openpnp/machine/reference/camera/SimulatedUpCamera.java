@@ -47,7 +47,7 @@ public class SimulatedUpCamera extends ReferenceCamera implements Runnable {
 
     @Override
     public BufferedImage internalCapture() {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D g = (Graphics2D) image.getGraphics();
         AffineTransform tx = g.getTransform();
         // invert the image in Y so that Y+ is up

@@ -62,6 +62,10 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.core.Commit;
 import org.simpleframework.xml.core.Persist;
 
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.Planar;
+
 public abstract class ReferenceCamera extends AbstractCamera implements ReferenceHeadMountable {
     static {
         nu.pattern.OpenCV.loadShared();
@@ -348,43 +352,46 @@ public abstract class ReferenceCamera extends AbstractCamera implements Referenc
 
     // TODO Optimization: We could skip the convert to and from Mat if no transforms are needed.
     protected BufferedImage transformImage(BufferedImage image) {
-        Mat mat = OpenCvUtils.toMat(image);
-
-        mat = crop(mat);
-
-        mat = calibrate(mat);
-
-        mat = undistort(mat);
-
-        // apply affine transformations
-        mat = scale(mat, scaleWidth, scaleHeight);
+//        Mat mat = OpenCvUtils.toMat(image);
+//
+//        mat = crop(mat);
+//
+//        mat = calibrate(mat);
+//
+//        mat = undistort(mat);
+//
+//        // apply affine transformations
+//        mat = scale(mat, scaleWidth, scaleHeight);
+//        
+//        mat = rotate(mat, rotation);
+//
+//        mat = offset(mat, offsetX, offsetY);
+//        
+//        mat = deinterlace(mat);
+//
+//        if (flipX || flipY) {
+//            int flipCode;
+//            if (flipX && flipY) {
+//                flipCode = -1;
+//            }
+//            else {
+//                flipCode = flipX ? 0 : 1;
+//            }
+//            Core.flip(mat, mat, flipCode);
+//        }
+//
+//        image = OpenCvUtils.toBufferedImage(mat);
+//        mat.release();
+//        
+//        if (image != null) { 
+//            // save the new image dimensions
+//            width = image.getWidth();
+//            height = image.getHeight();
+//        }
+//        return image;
         
-        mat = rotate(mat, rotation);
-
-        mat = offset(mat, offsetX, offsetY);
-        
-        mat = deinterlace(mat);
-
-        if (flipX || flipY) {
-            int flipCode;
-            if (flipX && flipY) {
-                flipCode = -1;
-            }
-            else {
-                flipCode = flipX ? 0 : 1;
-            }
-            Core.flip(mat, mat, flipCode);
-        }
-
-        image = OpenCvUtils.toBufferedImage(mat);
-        mat.release();
-        
-        if (image != null) { 
-            // save the new image dimensions
-            width = image.getWidth();
-            height = image.getHeight();
-        }
-        return image;
+        Planar<GrayU8> mat = ConvertBufferedImage.convertFromPlanar(image, null, true, GrayU8.class);
+        return ConvertBufferedImage.convertTo_U8(mat, null, true);
     }
 
     private Mat crop(Mat mat) {

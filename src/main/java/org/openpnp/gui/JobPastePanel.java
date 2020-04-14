@@ -311,7 +311,7 @@ public class JobPastePanel extends JPanel {
 
     public final Action dispenseAtPadLocationNextAction = new AbstractAction() {
         {
-            putValue(SMALL_ICON, Icons.dispenseNext;
+            putValue(SMALL_ICON, Icons.dispenseNext);
             putValue(NAME, "Dispense at pad and select next action");
             putValue(SHORT_DESCRIPTION, "Dispense paste at pad  and select next action");
         }

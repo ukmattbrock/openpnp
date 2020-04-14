@@ -11,6 +11,9 @@ public class Icons {
     public static Icon export = getIcon("/icons/export.svg");
     public static Icon importt = getIcon("/icons/import.svg");
     
+    public static Icon dispense = getIcon("/icons/dispense.svg");
+    public static Icon dispenseNext = getIcon("/icons/dispense-next.svg");
+
     public static Icon nozzleAdd = getIcon("/icons/nozzle-add.svg");
     public static Icon nozzleRemove = getIcon("/icons/nozzle-remove.svg");
 

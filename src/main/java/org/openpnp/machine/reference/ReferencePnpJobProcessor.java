@@ -542,7 +542,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
                 throw new JobProcessorException(null, e);
             }
 
-            feed(feeder, nozzle);
+            feed(feeder, nozzle, placement);
             
             pick(nozzle, feeder, placement, part);
 
@@ -583,7 +583,7 @@ public class ReferencePnpJobProcessor extends AbstractPnpJobProcessor {
             return retry;
         }
         
-        private void feed(Feeder feeder, Nozzle nozzle) throws JobProcessorException {
+        private void feed(Feeder feeder, Nozzle nozzle, Placement placement) throws JobProcessorException {
             Exception lastException = null;
             for (int i = 0; i < Math.max(1, feeder.getFeedRetryCount()); i++) {
                 try {

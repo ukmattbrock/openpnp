@@ -6,6 +6,7 @@ import org.openpnp.model.LengthUnit;
 import org.openpnp.model.Location;
 import org.openpnp.spi.Feeder;
 import org.openpnp.spi.base.AbstractFeeder;
+import org.openpnp.spi.Nozzle;
 import org.simpleframework.xml.Element;
 
 public abstract class ReferenceFeeder extends AbstractFeeder {

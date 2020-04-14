@@ -55,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -136,6 +137,9 @@ public class JobPanel extends JPanel {
     private List<File> recentJobs = new ArrayList<>();
 
     private final JobPlacementsPanel jobPlacementsPanel;
+    private final JobPastePanel jobPastePanel;
+
+    private JTabbedPane tabbedPane;
 
     private Job job;
 
@@ -251,6 +255,7 @@ public class JobPanel extends JPanel {
                             singleSelectionActionGroup.setEnabled(false);
                             multiSelectionActionGroup.setEnabled(false);
                             jobPlacementsPanel.setBoardLocation(null);
+                            jobPastePanel.setBoardLocation(null);
                             Configuration.get().getBus()
                                 .post(new BoardLocationSelectedEvent(null, JobPanel.this));
                         }
@@ -258,6 +263,7 @@ public class JobPanel extends JPanel {
                             multiSelectionActionGroup.setEnabled(false);
                             singleSelectionActionGroup.setEnabled(true);
                             jobPlacementsPanel.setBoardLocation(selections.get(0));
+                            jobPastePanel.setBoardLocation(selections.get(0));
                             Configuration.get().getBus()
                                 .post(new BoardLocationSelectedEvent(selections.get(0), JobPanel.this));
                         }
@@ -265,6 +271,7 @@ public class JobPanel extends JPanel {
                             singleSelectionActionGroup.setEnabled(false);
                             multiSelectionActionGroup.setEnabled(true);
                             jobPlacementsPanel.setBoardLocation(null);
+                            jobPastePanel.setBoardLocation(null);
                             Configuration.get().getBus()
                                 .post(new BoardLocationSelectedEvent(null, JobPanel.this));
                         }
@@ -377,9 +384,12 @@ public class JobPanel extends JPanel {
         splitPane.setLeftComponent(pnlBoards);
         splitPane.setRightComponent(pnlRight);
 
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+
+        jobPastePanel = new JobPastePanel(this);
         jobPlacementsPanel = new JobPlacementsPanel(this);
 
-        pnlRight.add(jobPlacementsPanel, BorderLayout.CENTER);
+        pnlRight.add(tabbedPane, BorderLayout.CENTER);
 
         add(splitPane);
 
@@ -392,6 +402,9 @@ public class JobPanel extends JPanel {
                 Machine machine = configuration.getMachine();
 
                 machine.addListener(machineListener);
+
+                tabbedPane.addTab("Pick and Place", null, jobPlacementsPanel, null); //$NON-NLS-1$
+                tabbedPane.addTab("Solder Paste", null, jobPastePanel, null); //$NON-NLS-1$
 
                 machine.getPnpJobProcessor().addTextStatusListener(textStatusListener);
 
@@ -454,10 +467,17 @@ public class JobPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             MainFrame.get().showTab("Job"); //$NON-NLS-1$
 
+            showTab("Pick and Place");
+
             selectBoardLocation(event.boardLocation);
 
             jobPlacementsPanel.selectPlacement(event.placement);
         });
+    }
+
+    private void showTab(String title) {
+        int index = tabbedPane.indexOfTab(title);
+        tabbedPane.setSelectedIndex(index);
     }
 
     private void selectBoardLocation(BoardLocation boardLocation) {
@@ -692,6 +712,7 @@ public class JobPanel extends JPanel {
                     Translations.getString("JobPanel.Action.Job.Start.Description")); //$NON-NLS-1$
             stopJobAction.setEnabled(false);
             stepJobAction.setEnabled(true);
+            tabbedPane.setEnabled(true);
         }
         else if (state == State.Running) {
             startPauseResumeJobAction.setEnabled(true);
@@ -702,6 +723,7 @@ public class JobPanel extends JPanel {
                     Translations.getString("JobPanel.Action.Job.Pause.Description")); //$NON-NLS-1$
             stopJobAction.setEnabled(true);
             stepJobAction.setEnabled(false);
+            tabbedPane.setEnabled(false);
         }
         else if (state == State.Paused) {
             startPauseResumeJobAction.setEnabled(true);
@@ -712,16 +734,19 @@ public class JobPanel extends JPanel {
                     Translations.getString("JobPanel.Action.Job.Resume.Description")); //$NON-NLS-1$
             stopJobAction.setEnabled(true);
             stepJobAction.setEnabled(true);
+            tabbedPane.setEnabled(false);
         }
         else if (state == State.Pausing) {
             startPauseResumeJobAction.setEnabled(false);
             stopJobAction.setEnabled(false);
             stepJobAction.setEnabled(false);
+            tabbedPane.setEnabled(false);
         }
         else if (state == State.Stopping) {
             startPauseResumeJobAction.setEnabled(false);
             stopJobAction.setEnabled(false);
             stepJobAction.setEnabled(false);
+            tabbedPane.setEnabled(false);
         }
 
         // We allow the above to run first so that all state is represented
@@ -784,6 +809,7 @@ public class JobPanel extends JPanel {
                     existingBoard.addSolderPastePad(pad);
                 }
                 jobPlacementsPanel.setBoardLocation(getSelection());
+                jobPastePanel.setBoardLocation(getSelection());
             }
         }
         catch (Exception e) {
